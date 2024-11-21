@@ -17,14 +17,7 @@ CREATE TABLE Eventos (
         fecha GLOB '[0-3][0-9]/[0-1][0-9]/[0-9][0-9][0-9][0-9]'
     ),
     direccion TEXT NOT NULL,
+    rutaImagen TEXT NOT NULL,
     latitud REAL NOT NULL,
     longitud REAL NOT NULL
-);
-
-
-CREATE TABLE Imagenes (
-    id_imagen INTEGER PRIMARY KEY AUTOINCREMENT,
-    id_evento INTEGER NOT NULL,
-    imagen BLOB NOT NULL,
-    FOREIGN KEY (id_evento) REFERENCES Eventos(id_evento) ON DELETE CASCADE
 );

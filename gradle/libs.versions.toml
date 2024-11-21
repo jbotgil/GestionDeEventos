@@ -33,6 +33,7 @@ sqldelightAndroidDriver = "com.squareup.sqldelight:android-driver:1.5.5"
 sqldelightSqliteDriver = "com.squareup.sqldelight:sqlite-driver:1.5.5"
 sqldelightCoroutinesExtensions = "com.squareup.sqldelight:coroutines-extensions-jvm:1.5.5"
 
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
