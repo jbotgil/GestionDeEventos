@@ -12,9 +12,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.gestiondeeventos.ui.theme.GestionDeEventosTheme
+import com.squareup.sqldelight.android.AndroidSqliteDriver
+import com.squareup.sqldelight.db.SqlDriver
+import com.example.database.AppDatabase
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var database: AppDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        //Abrir la base de datos SQLDelight, obtener el objeto "database"
+        val driver: SqlDriver = AndroidSqliteDriver(AppDatabase.Schema, this, "app.db")
+        database = AppDatabase(driver)
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {

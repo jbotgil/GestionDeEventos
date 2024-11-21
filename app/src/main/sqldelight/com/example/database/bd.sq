@@ -1,0 +1,30 @@
+CREATE TABLE Usuarios (
+    id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    mail TEXT NOT NULL UNIQUE,
+    passwd TEXT NOT NULL,
+    esAdmin INTEGER NOT NULL CHECK (esAdmin IN (0, 1)) -- 1 si es admin, 0 si es un usuario normal
+);
+
+
+CREATE TABLE Eventos (
+    id_evento INTEGER PRIMARY KEY AUTOINCREMENT,
+    titulo TEXT NOT NULL,
+    fecha TEXT NOT NULL CHECK (
+        fecha GLOB '[1-9]/[1-9]/[0-9][0-9][0-9][0-9]' OR
+        fecha GLOB '[1-9]/[0-1][0-9]/[0-9][0-9][0-9][0-9]' OR
+        fecha GLOB '[0-3][0-9]/[1-9]/[0-9][0-9][0-9][0-9]' OR
+        fecha GLOB '[0-3][0-9]/[0-1][0-9]/[0-9][0-9][0-9][0-9]'
+    ),
+    direccion TEXT NOT NULL,
+    latitud REAL NOT NULL,
+    longitud REAL NOT NULL
+);
+
+
+CREATE TABLE Imagenes (
+    id_imagen INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_evento INTEGER NOT NULL,
+    imagen BLOB NOT NULL,
+    FOREIGN KEY (id_evento) REFERENCES Eventos(id_evento) ON DELETE CASCADE
+);
