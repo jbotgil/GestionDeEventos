@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -28,6 +29,7 @@ fun RegisterScreen(navController: NavHostController) {
     var password1 by remember { mutableStateOf("") }
     var password2 by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
+    val botonHabilitado by derivedStateOf { email.isNotBlank() && username.isNotBlank() && password1.isNotBlank() && password2.isNotBlank() }
 
     Box(
         modifier = Modifier
@@ -66,18 +68,33 @@ fun RegisterScreen(navController: NavHostController) {
                         checked = isPasswordVisible,
                         onCheckedChange = { isPasswordVisible = it },
                         colors = CheckboxDefaults.colors(
-                            checkedColor = Color.White,      // Color de fondo cuando está marcado
+                            checkedColor = Color(android.graphics.Color.parseColor("#A12D4A")),      // Color de fondo cuando está marcado
                             uncheckedColor = Color.White,    // Color del borde cuando está desmarcado
-                            checkmarkColor = Color.Black     // Color de la marca (✓) dentro del checkbox
+                            checkmarkColor = Color.White     // Color de la marca (✓) dentro del checkbox
                         )
                     )
                 }
 
-                Button(onClick = { /* Lógica de registro */ }, modifier = Modifier.padding(top = 24.dp)) {
+                // Botón de registro con estilo deshabilitado
+                Button(
+                    onClick = { /* Lógica del registro */ },
+                    modifier = Modifier
+                        .padding(top = 24.dp)
+                        .fillMaxWidth(0.8f),
+                    enabled = botonHabilitado,
+                    colors = ButtonDefaults.buttonColors(
+                        disabledContainerColor = Color.Gray.copy(alpha = 0.5f),
+                        disabledContentColor = Color.White.copy(alpha = 0.5f),
+                        containerColor = Color(android.graphics.Color.parseColor("#A12D4A")),
+                        contentColor = Color.White
+                    )
+                ) {
                     Text("Register")
                 }
+
                 Text(
                     text = "Volver al Login",
+                    textDecoration = TextDecoration.Underline,
                     color = Color.White,
                     modifier = Modifier
                         .padding(top = 16.dp)

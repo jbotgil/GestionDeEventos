@@ -15,8 +15,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -25,6 +27,8 @@ import androidx.navigation.NavHostController
 fun LoginScreen(navController: NavHostController) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val botonHabilitado by derivedStateOf { username.isNotBlank() && password.isNotBlank() }
+
 
     Box(
         modifier = Modifier
@@ -46,11 +50,24 @@ fun LoginScreen(navController: NavHostController) {
                 Text("LOGIN", color = Color.White, style = MaterialTheme.typography.headlineMedium, fontSize = 24.sp)
                 LoginTextField("Usuario", Icons.Default.Person, username) { username = it }
                 LoginPasswordField(password) { password = it }
-                Button(onClick = { /* Lógica de inicio de sesión */ }, modifier = Modifier.padding(top = 24.dp)) {
+                Button(
+                    onClick = { /* Lógica de inicio de sesión */ },
+                    modifier = Modifier
+                        .padding(top = 24.dp)
+                        .fillMaxWidth(0.8f), // El botón ocupa el 70% del ancho de la columna
+                    enabled = botonHabilitado,
+                    colors = ButtonDefaults.buttonColors(
+                        disabledContainerColor = Color.Gray.copy(alpha = 0.5f),
+                        disabledContentColor = Color.White.copy(alpha = 0.5f),
+                        containerColor = Color(android.graphics.Color.parseColor("#A12D4A")),
+                        contentColor = Color.White
+                    )
+                ) {
                     Text("Login")
                 }
                 Text(
                     text = "Crear cuenta",
+                    textDecoration = TextDecoration.Underline,
                     color = Color.White,
                     modifier = Modifier
                         .padding(top = 16.dp)
@@ -90,6 +107,8 @@ fun LoginTextField(label: String, icon: ImageVector, value: String, onValueChang
 @Composable
 fun LoginPasswordField(value: String, onValueChange: (String) -> Unit) {
     var isPasswordVisible by remember { mutableStateOf(false) }
+    var recordarDatos by remember { mutableStateOf(false) }
+
 
     Column {
         // Campo de entrada de contraseña
@@ -136,9 +155,31 @@ fun LoginPasswordField(value: String, onValueChange: (String) -> Unit) {
                 checked = isPasswordVisible,
                 onCheckedChange = { isPasswordVisible = it },
                 colors = CheckboxDefaults.colors(
-                    checkedColor = Color.White,      // Color de fondo cuando está marcado
+                    checkedColor = Color(android.graphics.Color.parseColor("#A12D4A")),      // Color de fondo cuando está marcado
                     uncheckedColor = Color.White,    // Color del borde cuando está desmarcado
-                    checkmarkColor = Color.Black     // Color de la marca (✓) dentro del checkbox
+                    checkmarkColor = Color.White     // Color de la marca (✓) dentro del checkbox
+                )
+            )
+        }
+
+        //Input tipo Switch para recordar a futuro el usuario y la contraseña
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(start = 16.dp, top = 4.dp)
+                .fillMaxWidth(0.8f)
+        ) {
+            // Switch para habilitar recordar datos
+            Text("Recordar datos", color = Color.White)
+            Switch(
+                checked = recordarDatos, // Usamos la variable recordarDatos para controlar el estado
+                onCheckedChange = { recordarDatos = it }, // Cambiamos el valor de recordarDatos cuando el switch cambia
+                modifier = Modifier.padding(start = 70.dp),
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color.White,     // Color del "thumb" cuando está activado A12D4A
+                    uncheckedThumbColor = Color.Gray,    // Color del "thumb" cuando está desactivado
+                    checkedTrackColor = Color(android.graphics.Color.parseColor("#A12D4A")),  // Color de la pista cuando está activado
+                    uncheckedTrackColor = Color.LightGray // Color de la pista cuando está desactivado
                 )
             )
         }
