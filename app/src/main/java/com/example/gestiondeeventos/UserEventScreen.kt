@@ -1,5 +1,7 @@
 package com.example.gestiondeeventos
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,11 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 
 @Composable
 fun UserEventScreen(navController: NavHostController) {
+    val context = LocalContext.current
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -87,10 +92,19 @@ fun UserEventScreen(navController: NavHostController) {
                     containerColor = Color(android.graphics.Color.parseColor("#A12D4A")),
                 )
             ) {
-                Icon(Icons.Default.Settings, contentDescription = "Configuración")
+                Icon(
+                    Icons.Default.Settings,
+                    contentDescription = "Configuración",
+                    modifier = Modifier
+                        .size(70.dp)
+                )
             }
             Button(
-                onClick = { /* Acción información */ },
+                onClick = {
+                    Toast.makeText(context, "Desliza y pulsa para ver los eventos", Toast.LENGTH_SHORT).apply {
+                        setGravity(android.view.Gravity.BOTTOM, 0, 180) // Mueve hacia arriba
+                    }.show()
+                },
                 modifier = Modifier
                     .size(80.dp) // Tamaño fijo para que sea redondo
                     .clip(CircleShape),
@@ -99,7 +113,12 @@ fun UserEventScreen(navController: NavHostController) {
                     containerColor = Color(android.graphics.Color.parseColor("#A12D4A")),
                 )
             ) {
-                Icon(Icons.Default.Info, contentDescription = "Información")
+                Icon(
+                    Icons.Default.Info,
+                    contentDescription = "Información",
+                    modifier = Modifier
+                        .size(70.dp)
+                )
             }
         }
     }
