@@ -1,5 +1,6 @@
 package com.example.gestiondeeventos
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -21,8 +22,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun LoginScreen(navController: NavHostController) {
     var username by remember { mutableStateOf("") }
@@ -51,7 +54,10 @@ fun LoginScreen(navController: NavHostController) {
                 LoginTextField("Usuario", Icons.Default.Person, username) { username = it }
                 LoginPasswordField(password) { password = it }
                 Button(
-                    onClick = { /* Lógica de inicio de sesión */ },
+                    onClick = {
+                        //TODO: Terminar la logica del login
+                        navController.navigate("userEvents")
+                    },
                     modifier = Modifier
                         .padding(top = 24.dp)
                         .fillMaxWidth(0.8f), // El botón ocupa el 70% del ancho de la columna

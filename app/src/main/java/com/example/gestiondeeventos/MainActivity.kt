@@ -39,12 +39,16 @@ fun AppNavigation() {
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
+        //Panel de navegacion
         NavHost(navController = navController, startDestination = "login") {
             composable("login") {
                 LoginScreen(navController)
             }
             composable("register") {
                 RegisterScreen(navController)
+            }
+            composable("userEvents"){
+                UserEventScreen(navController)
             }
         }
     }
