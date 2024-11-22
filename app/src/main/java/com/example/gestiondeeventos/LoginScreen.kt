@@ -1,6 +1,7 @@
 package com.example.gestiondeeventos
 
 import android.annotation.SuppressLint
+import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -95,6 +96,7 @@ fun LoginTextField(label: String, icon: ImageVector, value: String, onValueChang
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(imageVector = icon, contentDescription = null, tint = Color.Black)
+            Spacer(modifier = Modifier.padding(5.dp))
             BasicTextField(
                 value = value,
                 onValueChange = onValueChange,
@@ -134,6 +136,7 @@ fun LoginPasswordField(value: String, onValueChange: (String) -> Unit) {
                     contentDescription = null,
                     tint = Color.Black
                 )
+                Spacer(modifier = Modifier.padding(5.dp))
                 BasicTextField(
                     value = value,
                     onValueChange = onValueChange,

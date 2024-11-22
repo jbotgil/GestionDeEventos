@@ -47,9 +47,10 @@ fun AppNavigation() {
             composable("register") {
                 RegisterScreen(navController)
             }
-            composable("userEvents"){
+            composable("userEvents") {
                 UserEventScreen(navController)
             }
+
         }
     }
 }

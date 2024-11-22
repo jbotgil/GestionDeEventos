@@ -1,17 +1,28 @@
 package com.example.gestiondeeventos
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -24,7 +35,7 @@ fun UserEventScreen(navController: NavHostController) {
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
-                    colors = listOf(Color.Black.copy(alpha = 0.8f), Color.Black.copy(alpha = 0.6f))
+                    colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.6f))
                 )
             )
     ) {
@@ -35,7 +46,7 @@ fun UserEventScreen(navController: NavHostController) {
             // Sección del título
             Box(
                 modifier = Modifier
-                    .weight(1.2f) // Proporción del espacio vertical
+                    .weight(1.3f) // Proporción del espacio vertical
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center // Centra el texto vertical y horizontalmente
             ) {
@@ -50,7 +61,7 @@ fun UserEventScreen(navController: NavHostController) {
             Box(
                 modifier = Modifier
                     .weight(6f) // Ajusta el peso restante para la lista de eventos
-                    .padding(bottom = 80.dp) // Espacio reservado para los botones
+                    .padding(bottom = 50.dp) // Espacio reservado para los botones
             ) {
                 EventListScreen()
             }
@@ -60,20 +71,35 @@ fun UserEventScreen(navController: NavHostController) {
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(16.dp),
-            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp)
+                .padding(16.dp)
+                .padding(bottom = 20.dp)
+                .padding(horizontal = 10.dp)
+                .fillMaxWidth() ,
+            horizontalArrangement = Arrangement.SpaceBetween, // Distribuir los botones a los extremos
         ) {
             Button(
                 onClick = { /* Acción configuración */ },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .size(80.dp) // Tamaño fijo para que sea redondo
+                    .clip(CircleShape),
+                contentPadding = PaddingValues(0.dp), // Sin padding para ajustarse al círculo
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(android.graphics.Color.parseColor("#A12D4A")),
+                )
             ) {
-                Text("Config")
+                Icon(Icons.Default.Settings, contentDescription = "Configuración")
             }
             Button(
                 onClick = { /* Acción información */ },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .size(80.dp) // Tamaño fijo para que sea redondo
+                    .clip(CircleShape),
+                contentPadding = PaddingValues(0.dp), // Sin padding para ajustarse al círculo
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(android.graphics.Color.parseColor("#A12D4A")),
+                )
             ) {
-                Text("Info")
+                Icon(Icons.Default.Info, contentDescription = "Información")
             }
         }
     }

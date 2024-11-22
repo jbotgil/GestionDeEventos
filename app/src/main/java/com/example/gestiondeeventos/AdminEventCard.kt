@@ -25,12 +25,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun EventCard(title: String, date: String, location: String, onEdit: () -> Unit) {
+fun AdminEventCard(title: String, date: String, location: String, onEdit: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -61,19 +60,32 @@ fun EventCard(title: String, date: String, location: String, onEdit: () -> Unit)
             Text(date, color = Color.White.copy(alpha = 0.8f))
             Text(location, color = Color.White.copy(alpha = 0.6f))
         }
+
+        Button(
+            onClick = onEdit,
+            modifier = Modifier
+                .size(40.dp) // Tamaño fijo para que sea redondo
+                .clip(CircleShape)
+                .align(Alignment.CenterVertically)
+                .border(1.dp, Color.Transparent, CircleShape), // Quitar el fondo
+            contentPadding = PaddingValues(0.dp), // Sin padding para ajustarse al círculo
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent) // Fondo transparente
+        ) {
+            Icon(imageVector = Icons.Default.Create, contentDescription = null, tint = Color.White)
+        }
     }
 }
 
 
 
-data class EventData(val title: String, val date: String, val location: String)
+data class AdminEventData(val title: String, val date: String, val location: String)
 
 @Composable
-fun EventListScreen() {
-    val events = mutableListOf<EventData>()
+fun AdminEventListScreen() {
+    val events = mutableListOf<AdminEventData>()
 
     for (i in 1..10) {
-        events.add(EventData("Evento $i", "20/11/2024", "Dirección $i"))
+        events.add(AdminEventData("Evento $i", "20/11/2024", "Dirección $i"))
     }
 
 
@@ -94,7 +106,7 @@ fun EventListScreen() {
             ) {
                 items(events.size) { index ->
                     val event = events[index]
-                    EventCard(
+                    AdminEventCard(
                         title = event.title,
                         date = event.date,
                         location = event.location,
