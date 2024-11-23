@@ -1,4 +1,4 @@
-package com.example.gestiondeeventos
+package com.example.gestiondeeventos.configuracion
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController

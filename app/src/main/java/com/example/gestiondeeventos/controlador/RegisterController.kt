@@ -10,28 +10,34 @@ class RegisterController(private val context: Context) {
 
     private lateinit var database: AppDatabase
 
-    fun registrarUsuario (
+    fun registrarUsuario(
         username: String,
         mail: String,
         passwd1: String,
         passwd2: String,
         esAdmin: Long
-    ) : Usuarios?
-    {
-        //Abrir la base de datos SQLDelight, obtener el objeto "database"
+    ): Usuarios? {
         val driver: SqlDriver = AndroidSqliteDriver(AppDatabase.Schema, context, "app.db")
         database = AppDatabase(driver)
         val bdQueries = database.bdQueries
-        var usuario: Usuarios? = null;
+        var usuario: Usuarios? = null
 
-        //Si las contraseñas coinciden se creará el usuario, en caso contrario
+        //TODO: VALIDAR LOS DATOS INTRODUCIDOS
+
+        // Verificar que las contraseñas coincidan
         if (passwd1 == passwd2) {
-            //Creamos una transaction de la db
             database.transaction {
-                //Comprobamos si ya hay un usuario con esos datos en la base de datos
-                usuario = bdQueries.GetUsuarioExistente(username,mail,passwd1).executeAsOneOrNull()
+                // Verificar si el usuario ya existe
+                usuario = bdQueries.GetUsuarioExistente(username, mail).executeAsOneOrNull()
+
+                if (usuario == null) {
+                    // Si no existe, registrar al usuario
+                    bdQueries.RegistrarUsuario(username, mail, passwd1, esAdmin)
+                    // Recuperar al usuario recién registrado
+                    usuario = bdQueries.GetUsuarioPorUsername(username).executeAsOneOrNull()
+                }
             }
         }
-        return usuario;
+        return usuario
     }
 }

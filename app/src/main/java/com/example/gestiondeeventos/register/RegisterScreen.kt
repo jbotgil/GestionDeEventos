@@ -3,6 +3,7 @@ package com.example.gestiondeeventos.register
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -38,7 +39,8 @@ fun RegisterScreen(navController: NavHostController) {
     var password2 by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
     val botonHabilitado by derivedStateOf { email.isNotBlank() && username.isNotBlank() && password1.isNotBlank() && password2.isNotBlank() }
-    val registerController = RegisterController(context = LocalContext.current)
+    val context = LocalContext.current
+    val registerController = RegisterController(context)
     var usuario: Usuarios? = null;
 
     Box(
@@ -92,8 +94,19 @@ fun RegisterScreen(navController: NavHostController) {
                 Button(
                     onClick = {
                         //TODO: LOGICA DEL REGISTRO
-                        usuario = registerController.registrarUsuario(username, email, password1, password2, 1)
+                        usuario = registerController.registrarUsuario(username, email, password1, password2, 0)
                         Log.d(TAG, "PruebaDeRegistro: $usuario")
+                        if(usuario == null){
+                            Toast.makeText(context, "Error al registrar el usuario.", Toast.LENGTH_SHORT).apply {
+                                setGravity(android.view.Gravity.BOTTOM, 0, 180) // Mueve hacia arriba
+                            }.show()
+                        } else {
+                            //Se ha podido registrar el usuario asi que lanzamos otro toast y navegamos a la pantalla del login
+                            Toast.makeText(context, "Usuario creado exitosamente", Toast.LENGTH_SHORT).apply {
+                                setGravity(android.view.Gravity.BOTTOM, 0, 180) // Mueve hacia arriba
+                            }.show()
+                            navController.navigate("login")
+                        }
                     },
                     modifier = Modifier
                         .padding(top = 24.dp)

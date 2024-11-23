@@ -1,6 +1,9 @@
 package com.example.gestiondeeventos.login
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -22,6 +26,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.database.Usuarios
+import com.example.gestiondeeventos.controlador.LoginController
+import com.example.gestiondeeventos.controlador.RegisterController
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
@@ -29,6 +36,9 @@ fun LoginScreen(navController: NavHostController) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val botonHabilitado by derivedStateOf { username.isNotBlank() && password.isNotBlank() }
+    val context = LocalContext.current
+    val loginController = LoginController(context)
+    var usuario: Usuarios? = null;
 
 
     Box(
@@ -41,7 +51,10 @@ fun LoginScreen(navController: NavHostController) {
             modifier = Modifier
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(Color.Black.copy(alpha = 0.8f), Color.Black.copy(alpha = 0.6f))
+                        colors = listOf(
+                            Color.Black.copy(alpha = 0.8f),
+                            Color.Black.copy(alpha = 0.6f)
+                        )
                     ),
                     shape = MaterialTheme.shapes.medium
                 )
@@ -54,7 +67,20 @@ fun LoginScreen(navController: NavHostController) {
                 Button(
                     onClick = {
                         //TODO: Terminar la logica del login
-                        navController.navigate("userEvents")
+                        usuario = loginController.iniciarSesion(username,password)
+
+                        if (usuario == null){ //No existe el usuario
+                            Toast.makeText(context, "Error en las credenciales o usuario inexistente.", Toast.LENGTH_SHORT).apply {
+                                setGravity(android.view.Gravity.BOTTOM, 0, 180) // Mueve hacia arriba
+                            }.show()
+                        } else if (usuario?.esAdmin?.toInt() == 1) {
+                            //El usuario es administrador, mandar a pantalla de administracion
+                            navController.navigate("adminEvents")
+                        } else {
+                            //El usuario no es un administrador, mandar a pantalla de usuarios
+                            navController.navigate("userEvents")
+                        }
+
                     },
                     modifier = Modifier
                         .padding(top = 24.dp)

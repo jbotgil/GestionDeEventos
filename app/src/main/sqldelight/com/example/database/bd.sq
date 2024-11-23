@@ -33,10 +33,13 @@ UpdatePassword:
 UPDATE Usuarios SET passwd = ? WHERE id_usuario = ?;
 
 GetUsuarioExistente:
-SELECT * FROM Usuarios WHERE username = ? AND mail = ? AND passwd = ?;
+SELECT * FROM Usuarios WHERE username = ? AND mail = ?;
 
-LogearUsuario:
+GetUsuarioExistenteUserPass:
 SELECT * FROM Usuarios WHERE username = ? AND passwd = ?;
+
+GetUsuarioPorUsername:
+SELECT * FROM Usuarios WHERE username = ?;
 
 RegistrarUsuario:
 INSERT INTO Usuarios (username,mail,passwd,esAdmin) VALUES (?,?,?,?);
