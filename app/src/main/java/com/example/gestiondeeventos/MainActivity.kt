@@ -8,17 +8,24 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.gestiondeeventos.login.LoginScreen
+import com.example.gestiondeeventos.menuPrincipal.usuario.AdminEventScreen
+import com.example.gestiondeeventos.menuPrincipal.usuario.UserEventScreen
+import com.example.gestiondeeventos.register.RegisterScreen
 import com.example.gestiondeeventos.ui.theme.GestionDeEventosTheme
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
         setContent {
             GestionDeEventosTheme {
@@ -31,6 +38,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -50,7 +58,9 @@ fun AppNavigation() {
             composable("userEvents") {
                 UserEventScreen(navController)
             }
-
+            composable("adminEvents") {
+                AdminEventScreen(navController)
+            }
         }
     }
 }

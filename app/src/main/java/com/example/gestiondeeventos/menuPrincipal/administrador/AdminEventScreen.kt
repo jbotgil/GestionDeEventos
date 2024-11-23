@@ -1,6 +1,5 @@
-package com.example.gestiondeeventos
+package com.example.gestiondeeventos.menuPrincipal.usuario
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,9 +29,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.gestiondeeventos.menuPrincipal.administrador.AdminEventListScreen
 
 @Composable
-fun UserEventScreen(navController: NavHostController) {
+fun AdminEventScreen(navController: NavHostController) {
     val context = LocalContext.current
 
     Box(
@@ -68,7 +68,7 @@ fun UserEventScreen(navController: NavHostController) {
                     .weight(6f) // Ajusta el peso restante para la lista de eventos
                     .padding(bottom = 50.dp) // Espacio reservado para los botones
             ) {
-                EventListScreen()
+                AdminEventListScreen()
             }
         }
 

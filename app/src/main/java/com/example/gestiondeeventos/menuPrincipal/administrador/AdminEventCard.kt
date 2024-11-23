@@ -1,4 +1,4 @@
-package com.example.gestiondeeventos
+package com.example.gestiondeeventos.menuPrincipal.administrador
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

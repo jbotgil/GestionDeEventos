@@ -1,6 +1,8 @@
-package com.example.gestiondeeventos
+package com.example.gestiondeeventos.register
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,12 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.database.Usuarios
+import com.example.gestiondeeventos.controlador.RegisterController
+import com.example.gestiondeeventos.login.LoginTextField
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
@@ -32,6 +38,8 @@ fun RegisterScreen(navController: NavHostController) {
     var password2 by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
     val botonHabilitado by derivedStateOf { email.isNotBlank() && username.isNotBlank() && password1.isNotBlank() && password2.isNotBlank() }
+    val registerController = RegisterController(context = LocalContext.current)
+    var usuario: Usuarios? = null;
 
     Box(
         modifier = Modifier
@@ -43,7 +51,10 @@ fun RegisterScreen(navController: NavHostController) {
             modifier = Modifier
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(Color.Black.copy(alpha = 0.8f), Color.Black.copy(alpha = 0.6f))
+                        colors = listOf(
+                            Color.Black.copy(alpha = 0.8f),
+                            Color.Black.copy(alpha = 0.6f)
+                        )
                     ),
                     shape = MaterialTheme.shapes.medium
                 )
@@ -79,7 +90,11 @@ fun RegisterScreen(navController: NavHostController) {
 
                 // Botón de registro con estilo deshabilitado
                 Button(
-                    onClick = { /* Lógica del registro */ },
+                    onClick = {
+                        //TODO: LOGICA DEL REGISTRO
+                        usuario = registerController.registrarUsuario(username, email, password1, password2, 1)
+                        Log.d(TAG, "PruebaDeRegistro: $usuario")
+                    },
                     modifier = Modifier
                         .padding(top = 24.dp)
                         .fillMaxWidth(0.8f),

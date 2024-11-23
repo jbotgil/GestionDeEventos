@@ -21,3 +21,28 @@ CREATE TABLE Eventos (
     latitud REAL NOT NULL,
     longitud REAL NOT NULL
 );
+
+-- Consultas
+GetUsuarios:
+SELECT * FROM Usuarios;
+
+GetEventos:
+SELECT * FROM Eventos;
+
+UpdatePassword:
+UPDATE Usuarios SET passwd = ? WHERE id_usuario = ?;
+
+GetUsuarioExistente:
+SELECT * FROM Usuarios WHERE username = ? AND mail = ? AND passwd = ?;
+
+LogearUsuario:
+SELECT * FROM Usuarios WHERE username = ? AND passwd = ?;
+
+RegistrarUsuario:
+INSERT INTO Usuarios (username,mail,passwd,esAdmin) VALUES (?,?,?,?);
+
+EliminarUsuario:
+DELETE FROM Usuarios WHERE id_usuario = ?;
+
+--CREAMOS UN USUARIO ADMINISTRADOR DEFAULT
+INSERT INTO Usuarios(mail,username,passwd,esAdmin) VALUES ("admin@gmail.com", "admin","admin",1);
