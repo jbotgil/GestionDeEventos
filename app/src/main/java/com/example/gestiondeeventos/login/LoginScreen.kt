@@ -1,6 +1,7 @@
 package com.example.gestiondeeventos.login
 
 import android.annotation.SuppressLint
+import android.content.SharedPreferences
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,18 +45,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.database.Usuarios
+import com.example.gestiondeeventos.UserPreference
 import com.example.gestiondeeventos.controlador.LoginController
 
-@SuppressLint("UnrememberedMutableState")
+@SuppressLint("UnrememberedMutableState", "RememberReturnType")
 @Composable
-fun LoginScreen(navController: NavHostController) {
+fun LoginScreen(navController: NavHostController, sharedPreferences: SharedPreferences) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var recordarDatos by remember { mutableStateOf(false) }
+
+    // Cargar datos una sola vez al inicio
+    remember {
+        val userPreferences = loadPersonFromPreferences(sharedPreferences)
+        if (userPreferences.recordarDatos) {
+            username = userPreferences.name
+            password = userPreferences.passwd
+            recordarDatos = userPreferences.recordarDatos
+        }
+    }
+
     val botonHabilitado by derivedStateOf { username.isNotBlank() && password.isNotBlank() }
     val context = LocalContext.current
     val loginController = LoginController(context)
-    var usuario: Usuarios? = null;
-
+    var usuario: Usuarios? = null
 
     Box(
         modifier = Modifier
@@ -77,30 +90,47 @@ fun LoginScreen(navController: NavHostController) {
                 .padding(24.dp)
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("LOGIN", color = Color.White, style = MaterialTheme.typography.headlineMedium, fontSize = 24.sp)
+                Text(
+                    "LOGIN",
+                    color = Color.White,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontSize = 24.sp
+                )
                 LoginTextField("Usuario", Icons.Default.Person, username) { username = it }
-                LoginPasswordField(password) { password = it }
+                LoginPasswordField(password, { password = it }, recordarDatos) { isChecked ->
+                    recordarDatos = isChecked
+
+                    // Limpiar campos y preferencias si "Recordar datos" se desactiva
+                    if (!recordarDatos) {
+                        clearPreferences(sharedPreferences)
+                    }
+                }
+
                 Button(
                     onClick = {
-                        //TODO: Terminar la logica del login
-                        usuario = loginController.iniciarSesion(username,password)
+                        usuario = loginController.iniciarSesion(username, password)
 
-                        if (usuario == null){ //No existe el usuario
+                        if (usuario == null) { // No existe el usuario
                             Toast.makeText(context, "Error en las credenciales o usuario inexistente.", Toast.LENGTH_SHORT).apply {
-                                setGravity(android.view.Gravity.BOTTOM, 0, 180) // Mueve hacia arriba
+                                setGravity(android.view.Gravity.BOTTOM, 0, 180)
                             }.show()
-                        } else if (usuario?.esAdmin?.toInt() == 1) {
-                            //El usuario es administrador, mandar a pantalla de administracion
-                            navController.navigate("adminEvents")
                         } else {
-                            //El usuario no es un administrador, mandar a pantalla de usuarios
-                            navController.navigate("userEvents")
-                        }
+                            // Guardar datos en preferencias si el usuario seleccionó "Recordar datos"
+                            savePersonToPreferences(
+                                UserPreference(username, password, recordarDatos),
+                                sharedPreferences
+                            )
 
+                            if (usuario?.esAdmin?.toInt() == 1) {
+                                navController.navigate("adminEvents")
+                            } else {
+                                navController.navigate("userEvents")
+                            }
+                        }
                     },
                     modifier = Modifier
                         .padding(top = 24.dp)
-                        .fillMaxWidth(0.8f), // El botón ocupa el 70% del ancho de la columna
+                        .fillMaxWidth(0.8f),
                     enabled = botonHabilitado,
                     colors = ButtonDefaults.buttonColors(
                         disabledContainerColor = Color.Gray.copy(alpha = 0.5f),
@@ -111,6 +141,7 @@ fun LoginScreen(navController: NavHostController) {
                 ) {
                     Text("Login")
                 }
+
                 Text(
                     text = "Crear cuenta",
                     textDecoration = TextDecoration.Underline,
@@ -123,6 +154,14 @@ fun LoginScreen(navController: NavHostController) {
         }
     }
 }
+
+fun clearPreferences(sharedPreferences: SharedPreferences) {
+    val editor = sharedPreferences.edit()
+    editor.clear()
+    editor.apply()
+}
+
+
 
 @Composable
 fun LoginTextField(label: String, icon: ImageVector, value: String, onValueChange: (String) -> Unit) {
@@ -152,13 +191,15 @@ fun LoginTextField(label: String, icon: ImageVector, value: String, onValueChang
 }
 
 @Composable
-fun LoginPasswordField(value: String, onValueChange: (String) -> Unit) {
+fun LoginPasswordField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    recordarDatos: Boolean,
+    onRecordarDatosChange: (Boolean) -> Unit
+) {
     var isPasswordVisible by remember { mutableStateOf(false) }
-    var recordarDatos by remember { mutableStateOf(false) }
-
 
     Column {
-        // Campo de entrada de contraseña
         Box(
             modifier = Modifier
                 .padding(16.dp)
@@ -191,7 +232,6 @@ fun LoginPasswordField(value: String, onValueChange: (String) -> Unit) {
             }
         }
 
-        // Fila para el texto y el checkbox
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -203,33 +243,49 @@ fun LoginPasswordField(value: String, onValueChange: (String) -> Unit) {
                 checked = isPasswordVisible,
                 onCheckedChange = { isPasswordVisible = it },
                 colors = CheckboxDefaults.colors(
-                    checkedColor = Color(android.graphics.Color.parseColor("#A12D4A")),      // Color de fondo cuando está marcado
-                    uncheckedColor = Color.White,    // Color del borde cuando está desmarcado
-                    checkmarkColor = Color.White     // Color de la marca (✓) dentro del checkbox
+                    checkedColor = Color(android.graphics.Color.parseColor("#A12D4A")),
+                    uncheckedColor = Color.White,
+                    checkmarkColor = Color.White
                 )
             )
         }
 
-        //Input tipo Switch para recordar a futuro el usuario y la contraseña
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .padding(start = 16.dp, top = 4.dp)
                 .fillMaxWidth(0.8f)
         ) {
-            // Switch para habilitar recordar datos
             Text("Recordar datos", color = Color.White)
             Switch(
-                checked = recordarDatos, // Usamos la variable recordarDatos para controlar el estado
-                onCheckedChange = { recordarDatos = it }, // Cambiamos el valor de recordarDatos cuando el switch cambia
+                checked = recordarDatos,
+                onCheckedChange = onRecordarDatosChange,
                 modifier = Modifier.padding(start = 70.dp),
                 colors = SwitchDefaults.colors(
-                    checkedThumbColor = Color.White,     // Color del "thumb" cuando está activado A12D4A
-                    uncheckedThumbColor = Color.Gray,    // Color del "thumb" cuando está desactivado
-                    checkedTrackColor = Color(android.graphics.Color.parseColor("#A12D4A")),  // Color de la pista cuando está activado
-                    uncheckedTrackColor = Color.LightGray // Color de la pista cuando está desactivado
+                    checkedThumbColor = Color.White,
+                    uncheckedThumbColor = Color.Gray,
+                    checkedTrackColor = Color(android.graphics.Color.parseColor("#A12D4A")),
+                    uncheckedTrackColor = Color.LightGray
                 )
             )
         }
     }
+}
+
+
+fun loadPersonFromPreferences(sharedPreferences: SharedPreferences): UserPreference {
+    //Borrar esta línea, leer datos de las prefs y devolver el objeto Person adecuado
+    val username = sharedPreferences.getString("username", "defaultName") ?: "defaultName"
+    val passwd = sharedPreferences.getString("passwd", "defpasswd")?: "defpasswd" //Esto no es nada seguro pero es un entorno controlado
+    val recordarDatos = sharedPreferences.getBoolean("recordarDatos", false)
+    return UserPreference(name = username, passwd = passwd, recordarDatos = recordarDatos)
+}
+
+fun savePersonToPreferences(user: UserPreference, sharedPreferences: SharedPreferences) {
+    //Guardar los datos de person en las prefs
+    val editor = sharedPreferences.edit()
+    editor.putString("username",user.name)
+    editor.putString("passwd",user.passwd)
+    editor.putBoolean("recordarDatos", user.recordarDatos)
+    editor.apply()
 }

@@ -1,5 +1,6 @@
 package com.example.gestiondeeventos
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,22 +21,31 @@ import com.example.gestiondeeventos.menuPrincipal.usuario.UserEventScreen
 import com.example.gestiondeeventos.register.RegisterScreen
 import com.example.gestiondeeventos.ui.theme.GestionDeEventosTheme
 
+data class UserPreference(val name: String, val passwd: String, val recordarDatos: Boolean) //En esta clase guardaremos las preferencias del usuario
+
 class MainActivity : ComponentActivity() {
 
+    //Aqui almacenaremos las preferencias de el usuario
+    private lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        //Inicializar SharedPreferences
+        sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
+
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
         setContent {
             GestionDeEventosTheme {
-                AppNavigation()
+                AppNavigation(sharedPreferences)
             }
         }
     }
 }
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(sharedPreferences: SharedPreferences) {
     val navController = rememberNavController()
 
 
@@ -49,7 +59,7 @@ fun AppNavigation() {
         //Panel de navegacion
         NavHost(navController = navController, startDestination = "login") {
             composable("login") {
-                LoginScreen(navController)
+                LoginScreen(navController, sharedPreferences)
             }
             composable("register") {
                 RegisterScreen(navController)
