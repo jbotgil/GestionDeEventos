@@ -29,6 +29,11 @@ class RegisterController(private val context: Context) {
             return null
         }
 
+        if (username.contains(" ")) {
+            Toast.makeText(context, "El nombre de usuario no puede contener espacios", Toast.LENGTH_SHORT).show()
+            return null
+        }
+
         // Validar el correo electrónico con una expresión regular
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$".toRegex()
         if (!mail.matches(emailRegex)) {
