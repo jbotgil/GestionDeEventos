@@ -17,10 +17,16 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,11 +34,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 
 @Composable
-fun UserEventScreen(navController: NavHostController) {
+fun UserEventScreen() {
     val context = LocalContext.current
+    var isMenuExpanded by remember { mutableStateOf(false) } // Controla la expansión del menú
 
     Box(
         modifier = Modifier
@@ -78,8 +84,8 @@ fun UserEventScreen(navController: NavHostController) {
                 .padding(16.dp)
                 .padding(bottom = 20.dp)
                 .padding(horizontal = 10.dp)
-                .fillMaxWidth() ,
-            horizontalArrangement = Arrangement.SpaceBetween, // Distribuir los botones a los extremos
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween // Distribuir los botones a los extremos
         ) {
             Button(
                 onClick = { /* Acción configuración */ },
@@ -88,36 +94,53 @@ fun UserEventScreen(navController: NavHostController) {
                     .clip(CircleShape),
                 contentPadding = PaddingValues(0.dp), // Sin padding para ajustarse al círculo
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(android.graphics.Color.parseColor("#A12D4A")),
+                    containerColor = Color(android.graphics.Color.parseColor("#A12D4A"))
                 )
             ) {
                 Icon(
                     Icons.Default.Settings,
                     contentDescription = "Configuración",
-                    modifier = Modifier
-                        .size(70.dp)
+                    modifier = Modifier.size(70.dp)
                 )
             }
-            Button(
-                onClick = {
-                    Toast.makeText(context, "Desliza y pulsa para ver los eventos", Toast.LENGTH_SHORT).apply {
-                        setGravity(android.view.Gravity.BOTTOM, 0, 180) // Mueve hacia arriba
-                    }.show()
-                },
-                modifier = Modifier
-                    .size(80.dp) // Tamaño fijo para que sea redondo
-                    .clip(CircleShape),
-                contentPadding = PaddingValues(0.dp), // Sin padding para ajustarse al círculo
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(android.graphics.Color.parseColor("#A12D4A")),
-                )
-            ) {
-                Icon(
-                    Icons.Default.Info,
-                    contentDescription = "Información",
+
+            Box {
+                Button(
+                    onClick = { isMenuExpanded = true }, // Mostrar menú al presionar
                     modifier = Modifier
-                        .size(70.dp)
-                )
+                        .size(80.dp) // Tamaño fijo para que sea redondo
+                        .clip(CircleShape),
+                    contentPadding = PaddingValues(0.dp), // Sin padding para ajustarse al círculo
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(android.graphics.Color.parseColor("#A12D4A"))
+                    )
+                ) {
+                    Icon(
+                        Icons.Default.Info,
+                        contentDescription = "Información",
+                        modifier = Modifier.size(70.dp)
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = isMenuExpanded,
+                    onDismissRequest = { isMenuExpanded = false } // Cerrar menú al interactuar fuera
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Información eventos") },
+                        onClick = {
+                            isMenuExpanded = false
+                            Toast.makeText(context, "Pulsa encima del evento que quieras obtener más información.", Toast.LENGTH_LONG).show()
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Información deslizamiento") },
+                        onClick = {
+                            isMenuExpanded = false
+                            Toast.makeText(context, "Desliza el dedo sobre la pantalla para mostrar todos los eventos.", Toast.LENGTH_LONG).show()
+                        }
+                    )
+                }
             }
         }
     }

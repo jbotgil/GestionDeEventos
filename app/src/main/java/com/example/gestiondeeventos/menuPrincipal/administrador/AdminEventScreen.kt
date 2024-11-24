@@ -28,11 +28,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.example.gestiondeeventos.menuPrincipal.administrador.AdminEventListScreen
 
 @Composable
-fun AdminEventScreen(navController: NavHostController) {
+fun AdminEventScreen() {
     val context = LocalContext.current
 
     Box(
