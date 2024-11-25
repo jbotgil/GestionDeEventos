@@ -50,6 +50,7 @@ INSERT INTO Usuarios(mail,username,passwd,esAdmin) VALUES ("admin@gmail.com", "a
 --Configoptions
 UpdateMail:
 UPDATE Usuarios SET mail = ? WHERE id_usuario = ?;
+
 UpdateUser:
 UPDATE Usuarios SET username = ? WHERE id_usuario = ?;
 UpdatePassword:

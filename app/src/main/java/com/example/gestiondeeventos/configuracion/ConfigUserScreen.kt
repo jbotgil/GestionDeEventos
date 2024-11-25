@@ -1,9 +1,6 @@
 package com.example.gestiondeeventos.configuracion
 
-import android.app.Activity
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,15 +21,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,32 +49,39 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.database.AppDatabase
 import com.example.database.Usuarios
+import com.example.gestiondeeventos.controlador.ConfigController
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
 
 
-private lateinit var database: AppDatabase
+lateinit var database: AppDatabase
 
 @Composable
 fun ConfigUserScreen(navController: NavController) {
     val context = LocalContext.current
     val driver: SqlDriver = AndroidSqliteDriver(AppDatabase.Schema, context, "app.db")
-    val database = AppDatabase(driver)
+    database = AppDatabase(driver)
     val bdQueries = database.bdQueries
     val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
     val idUsu = sharedPreferences.getLong("idUsuario", -1)
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     var usuario: Usuarios? = null
     database.transaction {
         usuario = bdQueries.GetUsuarioPorId(idUsu).executeAsOneOrNull()
-        Log.d(TAG, "ConfigUserScreen: $usuario")
+    }
+
+    if (usuario == null) {
+        Toast.makeText(context, "Error al cargar usuario", Toast.LENGTH_SHORT).show()
+        return
     }
 
     // Variables para almacenar valores de entrada
     val email = remember { mutableStateOf(usuario!!.mail) }
     val username = remember { mutableStateOf(usuario!!.username) }
-    val currentPassword = remember { mutableStateOf(usuario!!.passwd) }
+    val currentPassword = remember { mutableStateOf("") }
     val newPassword = remember { mutableStateOf("") }
+    val configController = ConfigController(context)
 
     Box(
         modifier = Modifier
@@ -84,9 +92,7 @@ fun ConfigUserScreen(navController: NavController) {
                 )
             )
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        Column(modifier = Modifier.fillMaxSize()) {
             Box(
                 modifier = Modifier
                     .weight(1.3f)
@@ -113,7 +119,6 @@ fun ConfigUserScreen(navController: NavController) {
                         .padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-
                     Text(
                         text = "Modificar datos de usuario",
                         style = TextStyle(
@@ -156,7 +161,7 @@ fun ConfigUserScreen(navController: NavController) {
                         value = newPassword.value,
                         onValueChange = { newPassword.value = it }
                     )
-                    // Texto "Eliminar cuenta" con acción
+
                     Text(
                         text = "Eliminar cuenta",
                         style = TextStyle(
@@ -166,12 +171,54 @@ fun ConfigUserScreen(navController: NavController) {
                             textDecoration = TextDecoration.Underline
                         ),
                         modifier = Modifier
-                            .align(Alignment.CenterHorizontally) // Alinea el texto al centro horizontal
+                            .align(Alignment.CenterHorizontally)
                             .padding(top = 24.dp)
                             .clickable {
-                                /* TODO: Mostrar alerta para confirmar/cancelar eliminación */
+                                showDeleteDialog = true
                             }
                     )
+
+                    if (showDeleteDialog) {
+                        AlertDialog(
+                            onDismissRequest = { showDeleteDialog = false },
+                            title = {
+                                Text(text = "Confirmar eliminación")
+                            },
+                            text = {
+                                Text("¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible.")
+                            },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        showDeleteDialog = false
+                                        // Lógica para eliminar la cuenta del usuario
+                                        configController.eliminarCuenta(usuario!!)
+                                        usuario = null
+                                        email.value = ""
+                                        username.value = ""
+                                        currentPassword.value = ""
+                                        newPassword.value = ""
+                                        Toast.makeText(context, "Cuenta eliminada exitosamente", Toast.LENGTH_SHORT).apply {
+                                            setGravity(android.view.Gravity.BOTTOM, 0, 180)
+                                        }.show()
+                                        navController.navigate("login") {
+                                            popUpTo("login") { inclusive = true }
+                                        }
+                                    }
+                                ) {
+                                    Text("Eliminar", color = Color.Red)
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(
+                                    onClick = { showDeleteDialog = false }
+                                ) {
+                                    Text("Cancelar")
+                                }
+                            }
+                        )
+                    }
+
                 }
             }
         }
@@ -185,7 +232,7 @@ fun ConfigUserScreen(navController: NavController) {
         ) {
             Button(
                 onClick = {
-                    Toast.makeText(context, "Configuración cancelada", Toast.LENGTH_SHORT).apply {
+                    Toast.makeText(context, "Saliendo...", Toast.LENGTH_SHORT).apply {
                         setGravity(android.view.Gravity.BOTTOM, 0, 180)
                     }.show()
                     navController.popBackStack()
@@ -209,8 +256,45 @@ fun ConfigUserScreen(navController: NavController) {
 
             Button(
                 onClick = {
-                    // Guardar datos y mostrar un Toast de confirmación
-                    /*TODO: LANZAR LOGICA DE GUARDADO DE DATOS DEL USUARIO*/
+                    /* Actualización de mail */
+                    if (usuario!!.mail != email.value) {
+                        usuario = usuario!!.copy(mail = email.value) // Actualizamos localmente
+                        usuario = configController.actualizarCorreo(usuario!!)
+                        Toast.makeText(context, "Correo actualizado exitosamente", Toast.LENGTH_SHORT).apply {
+                            setGravity(android.view.Gravity.BOTTOM, 0, 180)
+                        }.show()
+                        navController.navigate("userEvents") {
+                            popUpTo("userEvents") { inclusive = false }
+                        }
+                    }
+                    /* Actualización de usuario */
+                    if(usuario!!.username != username.value) {
+                      usuario = usuario!!.copy(username = username.value) // Actualizamos localmente
+                      usuario = configController.actualizarUsername(usuario!!)
+                      Toast.makeText(context, "Usuario actualizado exitosamente", Toast.LENGTH_SHORT).apply {
+                          setGravity(android.view.Gravity.BOTTOM, 0, 180)
+                      }.show()
+                      navController.navigate("userEvents") {
+                          popUpTo("userEvents") { inclusive = false }
+                      }
+                    }
+                    /* Actualización de contraseña */
+                    if (usuario!!.passwd == currentPassword.value ){
+                        if(usuario!!.passwd != newPassword.value) {
+                            usuario = usuario!!.copy(passwd = newPassword.value) // Actualizamos localmente
+                            usuario = configController.actualizarPasswd(usuario!!)
+                            Toast.makeText(context, "Contraseña actualizada exitosamente", Toast.LENGTH_SHORT).apply {
+                                setGravity(android.view.Gravity.BOTTOM, 0, 180)
+                            }.show()
+                            navController.navigate("userEvents") {
+                                popUpTo("userEvents") { inclusive = false }
+                            }
+                        }
+                    } else {
+                        Toast.makeText(context, "Contraseña incorrecta", Toast.LENGTH_SHORT).apply {
+                            setGravity(android.view.Gravity.BOTTOM, 0, 180)
+                        }.show()
+                    }
                 },
                 modifier = Modifier
                     .height(50.dp)
@@ -229,6 +313,7 @@ fun ConfigUserScreen(navController: NavController) {
         }
     }
 }
+
 
 @Composable
 fun InputField(label: String, icon: ImageVector, value: String, onValueChange: (String) -> Unit) {
