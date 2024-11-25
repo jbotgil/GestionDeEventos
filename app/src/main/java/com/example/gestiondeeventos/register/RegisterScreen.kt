@@ -145,7 +145,12 @@ fun RegisterScreen(navController: NavHostController) {
                     color = Color.White,
                     modifier = Modifier
                         .padding(top = 16.dp)
-                        .clickable { navController.navigate("login") }
+                        .clickable {
+                            navController.navigate("login"){
+                                popUpTo("login") { inclusive = false } //Linea para no poder retroceder hacia atrás
+                                                                             //al pulsar el boton de retroceso en el movil
+                            }
+                        }
                 )
             }
         }
