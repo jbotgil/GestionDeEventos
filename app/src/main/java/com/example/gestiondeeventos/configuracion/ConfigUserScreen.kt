@@ -1,5 +1,9 @@
 package com.example.gestiondeeventos.configuracion
 
+import android.app.Activity
+import android.content.ContentValues.TAG
+import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,15 +46,33 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.database.AppDatabase
+import com.example.database.Usuarios
+import com.squareup.sqldelight.android.AndroidSqliteDriver
+import com.squareup.sqldelight.db.SqlDriver
+
+
+private lateinit var database: AppDatabase
 
 @Composable
 fun ConfigUserScreen(navController: NavController) {
     val context = LocalContext.current
+    val driver: SqlDriver = AndroidSqliteDriver(AppDatabase.Schema, context, "app.db")
+    val database = AppDatabase(driver)
+    val bdQueries = database.bdQueries
+    val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    val idUsu = sharedPreferences.getLong("idUsuario", -1)
+
+    var usuario: Usuarios? = null
+    database.transaction {
+        usuario = bdQueries.GetUsuarioPorId(idUsu).executeAsOneOrNull()
+        Log.d(TAG, "ConfigUserScreen: $usuario")
+    }
 
     // Variables para almacenar valores de entrada
-    val email = remember { mutableStateOf("") }
-    val username = remember { mutableStateOf("") }
-    val currentPassword = remember { mutableStateOf("") }
+    val email = remember { mutableStateOf(usuario!!.mail) }
+    val username = remember { mutableStateOf(usuario!!.username) }
+    val currentPassword = remember { mutableStateOf(usuario!!.passwd) }
     val newPassword = remember { mutableStateOf("") }
 
     Box(
@@ -99,7 +121,8 @@ fun ConfigUserScreen(navController: NavController) {
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
                         ),
-                        modifier = Modifier.padding(top = 16.dp, bottom = 24.dp)
+                        modifier = Modifier
+                            .padding(top = 16.dp, bottom = 24.dp)
                             .align(Alignment.CenterHorizontally)
                     )
 

@@ -5,13 +5,7 @@ import android.content.SharedPreferences
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
@@ -25,12 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -53,6 +42,7 @@ import com.example.gestiondeeventos.controlador.LoginController
 fun LoginScreen(navController: NavHostController, sharedPreferences: SharedPreferences) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var idUsuario by remember { mutableLongStateOf(-1L) }
     var recordarDatos by remember { mutableStateOf(false) }
 
     // Cargar datos una sola vez al inicio
@@ -62,6 +52,7 @@ fun LoginScreen(navController: NavHostController, sharedPreferences: SharedPrefe
             username = userPreferences.name
             password = userPreferences.passwd
             recordarDatos = userPreferences.recordarDatos
+            idUsuario = userPreferences.idUsuario
         }
     }
 
@@ -115,9 +106,12 @@ fun LoginScreen(navController: NavHostController, sharedPreferences: SharedPrefe
                                 setGravity(android.view.Gravity.BOTTOM, 0, 180)
                             }.show()
                         } else {
+                            // Actualiza el idUsuario si el login es exitoso
+                            idUsuario = usuario?.id_usuario ?: -1
+
                             // Guardar datos en preferencias si el usuario seleccionó "Recordar datos"
                             savePersonToPreferences(
-                                UserPreference(username, password, recordarDatos),
+                                UserPreference(username, password, recordarDatos, idUsuario),
                                 sharedPreferences
                             )
 
@@ -160,8 +154,6 @@ fun clearPreferences(sharedPreferences: SharedPreferences) {
     editor.clear()
     editor.apply()
 }
-
-
 
 @Composable
 fun LoginTextField(label: String, icon: ImageVector, value: String, onValueChange: (String) -> Unit) {
@@ -272,20 +264,19 @@ fun LoginPasswordField(
     }
 }
 
-
 fun loadPersonFromPreferences(sharedPreferences: SharedPreferences): UserPreference {
-    //Borrar esta línea, leer datos de las prefs y devolver el objeto Person adecuado
     val username = sharedPreferences.getString("username", "defaultName") ?: "defaultName"
-    val passwd = sharedPreferences.getString("passwd", "defpasswd")?: "defpasswd" //Esto no es nada seguro pero es un entorno controlado
+    val userId = sharedPreferences.getLong("idUsuario", -1)
+    val passwd = sharedPreferences.getString("passwd", "defpasswd") ?: "defpasswd"
     val recordarDatos = sharedPreferences.getBoolean("recordarDatos", false)
-    return UserPreference(name = username, passwd = passwd, recordarDatos = recordarDatos)
+    return UserPreference(name = username, passwd = passwd, recordarDatos = recordarDatos, idUsuario = userId)
 }
 
 fun savePersonToPreferences(user: UserPreference, sharedPreferences: SharedPreferences) {
-    //Guardar los datos de person en las prefs
     val editor = sharedPreferences.edit()
-    editor.putString("username",user.name)
-    editor.putString("passwd",user.passwd)
+    editor.putString("username", user.name)
+    editor.putString("passwd", user.passwd)
     editor.putBoolean("recordarDatos", user.recordarDatos)
+    editor.putLong("idUsuario", user.idUsuario)
     editor.apply()
 }

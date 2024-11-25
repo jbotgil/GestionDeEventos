@@ -9,7 +9,7 @@ import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
 
 class ConfigController(private val context: Context) {
-    private lateinit var database: AppDatabase
+   // private lateinit var database: AppDatabase
 
     private fun cargarDataBase(): AppDatabase {
         val driver: SqlDriver = AndroidSqliteDriver(AppDatabase.Schema, context, "app.db")
@@ -76,7 +76,8 @@ class ConfigController(private val context: Context) {
                 setGravity(android.view.Gravity.BOTTOM, 0, 180) // Mueve hacia arriba
             }.show()
             navController.navigate("login") {
-                popUpTo("login") { inclusive = false }
+                popUpTo("login") { inclusive = false } //Evita volver atras, para que el usuario que se haya eliminado pueda iniciar
+                                                             //como un usuario fantasma y ocasione problemas a la app
             }
         }
     }
