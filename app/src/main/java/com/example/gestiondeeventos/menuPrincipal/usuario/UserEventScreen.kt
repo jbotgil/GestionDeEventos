@@ -34,9 +34,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @Composable
-fun UserEventScreen() {
+fun UserEventScreen(navController: NavController) {
     val context = LocalContext.current
     var isMenuExpanded by remember { mutableStateOf(false) } // Controla la expansión del menú
 
@@ -88,7 +89,9 @@ fun UserEventScreen() {
             horizontalArrangement = Arrangement.SpaceBetween // Distribuir los botones a los extremos
         ) {
             Button(
-                onClick = { /* Acción configuración */ },
+                onClick = {
+                    navController.navigate("config")
+                },
                 modifier = Modifier
                     .size(80.dp) // Tamaño fijo para que sea redondo
                     .clip(CircleShape),

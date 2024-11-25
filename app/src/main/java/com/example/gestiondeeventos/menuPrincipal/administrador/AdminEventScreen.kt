@@ -1,4 +1,4 @@
-package com.example.gestiondeeventos.menuPrincipal.usuario
+package com.example.gestiondeeventos.menuPrincipal.administrador
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -28,10 +28,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.gestiondeeventos.menuPrincipal.administrador.AdminEventListScreen
+import androidx.navigation.NavController
 
 @Composable
-fun AdminEventScreen() {
+fun AdminEventScreen(navController: NavController) {
     val context = LocalContext.current
 
     Box(
@@ -55,7 +55,7 @@ fun AdminEventScreen() {
                 contentAlignment = Alignment.Center // Centra el texto vertical y horizontalmente
             ) {
                 Text(
-                    text = "EVENTOS",
+                    text = "ADMIN PANEL",
                     color = Color.White,
                     style = MaterialTheme.typography.headlineLarge // Estilo del texto
                 )
@@ -82,7 +82,9 @@ fun AdminEventScreen() {
             horizontalArrangement = Arrangement.SpaceBetween, // Distribuir los botones a los extremos
         ) {
             Button(
-                onClick = { /* Acción configuración */ },
+                onClick = {
+                    navController.navigate("config")
+                },
                 modifier = Modifier
                     .size(80.dp) // Tamaño fijo para que sea redondo
                     .clip(CircleShape),
