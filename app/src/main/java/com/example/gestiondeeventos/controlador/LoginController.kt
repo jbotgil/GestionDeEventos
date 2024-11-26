@@ -25,7 +25,7 @@ class LoginController(private val context: Context) {
 
         database.transaction {
             // Verificar si el usuario existe
-            usuario = bdQueries.GetUsuarioPorUsername(username).executeAsOneOrNull()
+            usuario = bdQueries.GetUsuarioPorUsernameAndPassword(username,passwd).executeAsOneOrNull()
         }
         return usuario //En caso de que exista devolvemos el usuario
     }

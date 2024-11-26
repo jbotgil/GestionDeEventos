@@ -35,6 +35,10 @@ SELECT * FROM Usuarios WHERE username = ? AND mail = ?;
 GetUsuarioPorUsername:
 SELECT * FROM Usuarios WHERE username = ?;
 
+GetUsuarioPorUsernameAndPassword:
+SELECT * FROM Usuarios WHERE username = ? AND passwd = ?;
+
+
 GetUsuarioPorId:
 SELECT * FROM Usuarios WHERE id_usuario = ?;
 

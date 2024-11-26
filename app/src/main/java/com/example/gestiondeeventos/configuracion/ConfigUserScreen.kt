@@ -263,9 +263,7 @@ fun ConfigUserScreen(navController: NavController) {
                         Toast.makeText(context, "Correo actualizado exitosamente", Toast.LENGTH_SHORT).apply {
                             setGravity(android.view.Gravity.BOTTOM, 0, 180)
                         }.show()
-                        navController.navigate("userEvents") {
-                            popUpTo("userEvents") { inclusive = false }
-                        }
+                        navController.popBackStack()
                     }
                     /* Actualización de usuario */
                     if(usuario!!.username != username.value) {
@@ -274,26 +272,25 @@ fun ConfigUserScreen(navController: NavController) {
                       Toast.makeText(context, "Usuario actualizado exitosamente", Toast.LENGTH_SHORT).apply {
                           setGravity(android.view.Gravity.BOTTOM, 0, 180)
                       }.show()
-                      navController.navigate("userEvents") {
-                          popUpTo("userEvents") { inclusive = false }
-                      }
+                      navController.popBackStack()
                     }
                     /* Actualización de contraseña */
-                    if (usuario!!.passwd == currentPassword.value ){
-                        if(usuario!!.passwd != newPassword.value) {
-                            usuario = usuario!!.copy(passwd = newPassword.value) // Actualizamos localmente
-                            usuario = configController.actualizarPasswd(usuario!!)
-                            Toast.makeText(context, "Contraseña actualizada exitosamente", Toast.LENGTH_SHORT).apply {
+
+                    if(currentPassword.value.isNotBlank() && newPassword.value.isNotBlank()) {
+                        if (usuario!!.passwd == currentPassword.value ){
+                            if(usuario!!.passwd != newPassword.value) {
+                                usuario = usuario!!.copy(passwd = newPassword.value) // Actualizamos localmente
+                                usuario = configController.actualizarPasswd(usuario!!)
+                                Toast.makeText(context, "Contraseña actualizada exitosamente", Toast.LENGTH_SHORT).apply {
+                                    setGravity(android.view.Gravity.BOTTOM, 0, 180)
+                                }.show()
+                                navController.popBackStack()
+                            }
+                        } else {
+                            Toast.makeText(context, "Contraseña incorrecta", Toast.LENGTH_SHORT).apply {
                                 setGravity(android.view.Gravity.BOTTOM, 0, 180)
                             }.show()
-                            navController.navigate("userEvents") {
-                                popUpTo("userEvents") { inclusive = false }
-                            }
                         }
-                    } else {
-                        Toast.makeText(context, "Contraseña incorrecta", Toast.LENGTH_SHORT).apply {
-                            setGravity(android.view.Gravity.BOTTOM, 0, 180)
-                        }.show()
                     }
                 },
                 modifier = Modifier
