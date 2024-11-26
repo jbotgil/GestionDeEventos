@@ -18,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.gestiondeeventos.configuracion.ConfigUserScreen
 import com.example.gestiondeeventos.login.LoginScreen
 import com.example.gestiondeeventos.menuPrincipal.administrador.AdminEventScreen
+import com.example.gestiondeeventos.menuPrincipal.administrador.CreateEventScreen
 import com.example.gestiondeeventos.menuPrincipal.usuario.UserEventScreen
 import com.example.gestiondeeventos.register.RegisterScreen
 import com.example.gestiondeeventos.ui.theme.GestionDeEventosTheme
@@ -73,6 +74,9 @@ fun AppNavigation(sharedPreferences: SharedPreferences) {
             }
             composable("config") {
                 ConfigUserScreen(navController)
+            }
+            composable("createEventScreen") {
+                CreateEventScreen(navController)
             }
         }
     }

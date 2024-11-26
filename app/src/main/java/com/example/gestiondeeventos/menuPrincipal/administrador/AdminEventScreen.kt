@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
@@ -102,9 +103,7 @@ fun AdminEventScreen(navController: NavController) {
             }
             Button(
                 onClick = {
-                    Toast.makeText(context, "Desliza y pulsa para ver los eventos", Toast.LENGTH_SHORT).apply {
-                        setGravity(android.view.Gravity.BOTTOM, 0, 180) // Mueve hacia arriba
-                    }.show()
+                   navController.navigate("createEventScreen")
                 },
                 modifier = Modifier
                     .size(80.dp) // Tamaño fijo para que sea redondo
@@ -115,8 +114,8 @@ fun AdminEventScreen(navController: NavController) {
                 )
             ) {
                 Icon(
-                    Icons.Default.Info,
-                    contentDescription = "Información",
+                    Icons.Default.Add,
+                    contentDescription = "Crear Evento",
                     modifier = Modifier
                         .size(70.dp)
                 )
