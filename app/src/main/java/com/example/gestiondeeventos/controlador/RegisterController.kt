@@ -23,6 +23,16 @@ class RegisterController(private val context: Context) {
         val bdQueries = database.bdQueries
         var usuario: Usuarios? = null
 
+        database.transaction {
+            usuario = bdQueries.GetUsuarioPorEmail(mail).executeAsOneOrNull()
+        }
+
+        if (usuario != null){
+            Toast.makeText(context, "Usuario existente", Toast.LENGTH_SHORT).show() //No pueden haber 2 usuarios con el mismo mail
+            return null
+        }
+
+
         // Validar el nombre de usuario
         if (username.isBlank()) {
             Toast.makeText(context, "El nombre de usuario no puede estar vacío", Toast.LENGTH_SHORT).show()

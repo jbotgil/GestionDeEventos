@@ -112,16 +112,8 @@ fun RegisterScreen(navController: NavHostController) {
                     onClick = {
                         //TODO: LOGICA DEL REGISTRO
                         usuario = registerController.registrarUsuario(username, email, password1, password2, 0)
-                        Log.d(TAG, "PruebaDeRegistro: $usuario")
-                        if(usuario == null){
-                            Toast.makeText(context, "Error al registrar el usuario.", Toast.LENGTH_SHORT).apply {
-                                setGravity(android.view.Gravity.BOTTOM, 0, 180) // Mueve hacia arriba
-                            }.show()
-                        } else {
-                            //Se ha podido registrar el usuario asi que lanzamos otro toast y navegamos a la pantalla del login
-                            Toast.makeText(context, "Usuario creado exitosamente", Toast.LENGTH_SHORT).apply {
-                                setGravity(android.view.Gravity.BOTTOM, 0, 180) // Mueve hacia arriba
-                            }.show()
+                        if (usuario != null){
+                            Toast.makeText(context, "Usuario registrado exitosamente", Toast.LENGTH_SHORT).show()
                             navController.navigate("login")
                         }
                     },

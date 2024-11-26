@@ -1,7 +1,7 @@
 CREATE TABLE Usuarios (
     id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL,
-    mail TEXT NOT NULL UNIQUE,
+    mail TEXT NOT NULL,
     passwd TEXT NOT NULL,
     esAdmin INTEGER NOT NULL CHECK (esAdmin IN (0, 1)) -- 1 si es admin, 0 si es un usuario normal
 );
@@ -21,6 +21,9 @@ CREATE TABLE Eventos (
     latitud REAL NOT NULL,
     longitud REAL NOT NULL
 );
+
+GetUsuarioPorEmail:
+SELECT * FROM Usuarios WHERE mail = ?;
 
 -- Consultas
 GetUsuarios:
