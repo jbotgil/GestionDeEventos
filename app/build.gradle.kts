@@ -52,7 +52,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -75,6 +74,8 @@ dependencies {
     implementation(libs.sqldelightSqliteDriver)
     implementation(libs.sqldelightCoroutinesExtensions)
 
+    //Coil (para las imagenes de los eventos)
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }
 // SQLDelight
 sqldelight {
