@@ -69,6 +69,7 @@ class RegisterController(private val context: Context) {
             if (usuario == null) {
                 // Si no existe, registrar al usuario
                 bdQueries.RegistrarUsuario(username, mail, passwd1, esAdmin)
+
                 // Recuperar al usuario recién registrado
                 usuario = bdQueries.GetUsuarioPorUsername(username).executeAsOneOrNull()
             } else {

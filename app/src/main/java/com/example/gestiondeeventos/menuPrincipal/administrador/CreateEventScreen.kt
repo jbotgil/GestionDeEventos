@@ -1,24 +1,15 @@
 package com.example.gestiondeeventos.menuPrincipal.administrador
 
 import android.content.Context
-import android.net.Uri
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,17 +18,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
 import com.example.database.AppDatabase
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
+import java.util.Calendar
 
 lateinit var database: AppDatabase
 
@@ -53,8 +41,6 @@ fun CreateEventScreen(navController: NavController) {
     var latitud by remember { mutableStateOf("") }
     var longitud by remember { mutableStateOf("") }
 
-    val scrollState = rememberScrollState()
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -67,7 +53,6 @@ fun CreateEventScreen(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState) // Hacer que el contenido sea desplazable
         ) {
             Box(
                 modifier = Modifier
@@ -91,17 +76,18 @@ fun CreateEventScreen(navController: NavController) {
                 Text("Título", color = Color.White)
                 InputField(
                     label = "Título del evento",
-                    icon = Icons.Default.Email,
+                    icon = Icons.Default.KeyboardArrowUp,
                     value = tituloEvento,
                     onValueChange = { tituloEvento = it }
                 )
 
                 Text("Fecha", color = Color.White)
-                InputField(
-                    label = "DD/MM/YYYY",
-                    icon = Icons.Default.Person,
-                    value = fecha,
-                    onValueChange = { fecha = it }
+                SeleccionarFecha(
+                    label = "Selecciona la fecha del evento",
+                    icon = Icons.Default.DateRange,
+                    selectedDate = fecha,
+                    onDateSelected = { fecha = it },
+                    context = context
                 )
 
                 Text("Dirección", color = Color.White)
@@ -126,12 +112,6 @@ fun CreateEventScreen(navController: NavController) {
                     icon = Icons.Default.KeyboardArrowUp,
                     value = longitud,
                     onValueChange = { longitud = it }
-                )
-
-                Text("Imagen", color = Color.White)
-                ImageInputField(
-                    label = "Seleccionar una imagen",
-                    icon = Icons.Default.Search
                 )
             }
 
@@ -165,7 +145,10 @@ fun CreateEventScreen(navController: NavController) {
             Spacer(modifier = Modifier.width(16.dp))
 
             Button(
-                onClick = { /* TODO: Implementar guardar evento */ },
+                onClick = {
+                    // Lógica para guardar el evento en la base de datos
+                    // database.insertEvent(tituloEvento, fecha, direccion, latitud.toDoubleOrNull(), longitud.toDoubleOrNull())
+                },
                 modifier = Modifier
                     .height(50.dp)
                     .weight(1f)
@@ -183,7 +166,6 @@ fun CreateEventScreen(navController: NavController) {
         }
     }
 }
-
 
 @Composable
 fun InputField(label: String, icon: ImageVector, value: String, onValueChange: (String) -> Unit) {
@@ -212,49 +194,46 @@ fun InputField(label: String, icon: ImageVector, value: String, onValueChange: (
 }
 
 @Composable
-fun ImageInputField(label: String, icon: ImageVector) {
-    val context = LocalContext.current
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        if (uri != null) {
-            selectedImageUri = uri
-            Toast.makeText(context, "Imagen seleccionada: $uri", Toast.LENGTH_SHORT).show()
-        }
-    }
+fun SeleccionarFecha(
+    label: String,
+    icon: ImageVector,
+    selectedDate: String,
+    onDateSelected: (String) -> Unit,
+    context: Context
+) {
+    val calendario = Calendar.getInstance()
+    val year = calendario.get(Calendar.YEAR)
+    val month = calendario.get(Calendar.MONTH)
+    val day = calendario.get(Calendar.DAY_OF_MONTH)
 
-    Column(
+    val datePickerDialog = android.app.DatePickerDialog(
+        context,
+        { _, anio, mes, dia ->
+            val formattedDate = "$dia/${mes + 1}/$anio"
+            onDateSelected(formattedDate)
+        },
+        year,
+        month,
+        day
+    )
+
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { launcher.launch("image/*") },
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .background(Color.White, RoundedCornerShape(8.dp))
+            .padding(8.dp)
+            .clickable { datePickerDialog.show() } // Abre el diálogo al hacer clic
     ) {
-        // Campo para seleccionar la imagen
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White, RoundedCornerShape(8.dp))
-                .padding(8.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             Icon(imageVector = icon, contentDescription = null, tint = Color.Black)
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = label, color = Color.Gray)
-        }
-
-        // Mostrar la imagen seleccionada
-        selectedImageUri?.let { uri ->
-            Image(
-                painter = rememberAsyncImagePainter(model = uri),
-                contentDescription = "Vista previa de la imagen seleccionada",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color.Gray)
+            Text(
+                text = if (selectedDate.isEmpty()) label else selectedDate,
+                style = TextStyle(color = if (selectedDate.isEmpty()) Color.Gray else Color.Black)
             )
         }
     }
 }
-
