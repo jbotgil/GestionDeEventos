@@ -2,6 +2,7 @@ package com.example.gestiondeeventos.menuPrincipal.usuario
 
 import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,12 +19,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.database.Eventos
 import com.example.gestiondeeventos.controlador.EventsController
 
 
 @Composable
-fun EventCard(title: String, date: String, location: String, onEdit: () -> Unit) {
+fun EventCard(title: String, date: String, location: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -32,6 +34,7 @@ fun EventCard(title: String, date: String, location: String, onEdit: () -> Unit)
                 shape = MaterialTheme.shapes.medium
             )
             .padding(16.dp)
+            .clickable( onClick = onClick )
     ) {
         Box(
             modifier = Modifier
@@ -57,10 +60,9 @@ fun EventCard(title: String, date: String, location: String, onEdit: () -> Unit)
     }
 }
 
-//data class EventData(val title: String, val date: String, val location: String)
 
 @Composable
-fun EventListScreen(context: Context) {
+fun EventListScreen(navController: NavController, context: Context) {
     val eventController = EventsController(context)
     val events = mutableListOf<Eventos>()
 
@@ -87,7 +89,10 @@ fun EventListScreen(context: Context) {
                         title = event.titulo,
                         date = event.fecha,
                         location = event.direccion,
-                        onEdit = {  /*Acción para editar*/  }
+                        onClick = {
+                            /* todo: accion al pulsar la card */
+                            navController.navigate("eventCardInfoScreen")
+                        }
                     )
                 }
             }

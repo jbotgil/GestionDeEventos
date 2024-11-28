@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,6 +20,7 @@ import com.example.gestiondeeventos.configuracion.ConfigUserScreen
 import com.example.gestiondeeventos.login.LoginScreen
 import com.example.gestiondeeventos.menuPrincipal.administrador.AdminEventScreen
 import com.example.gestiondeeventos.menuPrincipal.administrador.CreateEventScreen
+import com.example.gestiondeeventos.menuPrincipal.usuario.EventCardInfo
 import com.example.gestiondeeventos.menuPrincipal.usuario.UserEventScreen
 import com.example.gestiondeeventos.register.RegisterScreen
 import com.example.gestiondeeventos.ui.theme.GestionDeEventosTheme
@@ -49,7 +51,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavigation(sharedPreferences: SharedPreferences) {
     val navController = rememberNavController()
-
+    val context = LocalContext.current
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -77,6 +79,9 @@ fun AppNavigation(sharedPreferences: SharedPreferences) {
             }
             composable("createEventScreen") {
                 CreateEventScreen(navController)
+            }
+            composable("eventCardInfoScreen") {
+                EventCardInfo(navController, context)
             }
         }
     }
