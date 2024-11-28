@@ -1,5 +1,6 @@
 package com.example.gestiondeeventos.menuPrincipal.administrador
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.database.Eventos
+import com.example.gestiondeeventos.controlador.EventsController
 
 @Composable
 fun AdminEventCard(title: String, date: String, location: String, onEdit: () -> Unit) {
@@ -78,16 +81,13 @@ fun AdminEventCard(title: String, date: String, location: String, onEdit: () -> 
 
 
 
-data class AdminEventData(val title: String, val date: String, val location: String)
 
 @Composable
-fun AdminEventListScreen() {
-    val events = mutableListOf<AdminEventData>()
+fun AdminEventListScreen(context: Context) {
+    val eventController = EventsController(context)
+    val events = mutableListOf<Eventos>()
 
-    for (i in 1..10) {
-        events.add(AdminEventData("Evento $i", "20/11/2024", "Dirección $i"))
-    }
-
+    events.addAll(eventController.getEventos()!!)
 
     Box(
         modifier = Modifier
@@ -107,9 +107,9 @@ fun AdminEventListScreen() {
                 items(events.size) { index ->
                     val event = events[index]
                     AdminEventCard(
-                        title = event.title,
-                        date = event.date,
-                        location = event.location,
+                        title = event.titulo,
+                        date = event.fecha,
+                        location = event.direccion,
                         onEdit = { /* Acción para editar */ }
                     )
                 }

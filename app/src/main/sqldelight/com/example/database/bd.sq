@@ -69,7 +69,8 @@ GetEventoPorId:
 SELECT * FROM Eventos WHERE id_evento = ?;
 
 RegistrarEvento:
-INSERT INTO Eventos (titulo,fecha,direccion,latitud,longitud) VALUES (?,?,?,?,?);
+INSERT INTO Eventos (titulo, fecha, direccion, latitud, longitud)
+VALUES (?, ?, ?, ?, ?);
 
 --CREAMOS UN USUARIO ADMINISTRADOR DEFAULT
 INSERT INTO Usuarios(mail,username,passwd,esAdmin) VALUES ("admin@gmail.com", "admin","admin",1);

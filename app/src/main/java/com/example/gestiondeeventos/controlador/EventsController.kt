@@ -26,34 +26,40 @@ class EventsController(private val context: Context) {
     ) {
         database = cargarDataBase()
         val bdQueries = database.bdQueries
+        var validaciones = false
         //Validacion de que hayan datos introducidos
-
         when {
             titulo.isBlank() -> {
                 mostrarToast("El título no puede estar vacío.")
                 return
             }
+
             fecha.isBlank() -> {
                 mostrarToast("La fecha no puede estar vacía.")
                 return
             }
+
             direccion.isBlank() -> {
                 mostrarToast("La dirección no puede estar vacía.")
                 return
             }
-            latitud == null || latitud !in -90.0..90.0 -> {
+
+            latitud !in -90.0..90.0 -> {
                 mostrarToast("La latitud debe ser un valor entre -90 y 90.")
                 return
             }
-            longitud == null || longitud !in -180.0..180.0 -> {
+
+            longitud !in -180.0..180.0 -> {
                 mostrarToast("La longitud debe ser un valor entre -180 y 180.")
                 return
             }
         }
+
         //En caso de que todas las validaciones sean correctas volvemos aquí
         database.transaction {
             bdQueries.RegistrarEvento(titulo, fecha, direccion, latitud, longitud)
         }
+
         mostrarToast("Evento resgistrado exitosamente")
         navController.popBackStack()
     }

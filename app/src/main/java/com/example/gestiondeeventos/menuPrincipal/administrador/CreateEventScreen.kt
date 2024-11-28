@@ -3,6 +3,7 @@ package com.example.gestiondeeventos.menuPrincipal.administrador
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -38,7 +39,7 @@ lateinit var database: AppDatabase
 @Composable
 fun CreateEventScreen(navController: NavController) {
     val context = LocalContext.current
-    val evenetoController = EventsController(context)
+    val eventoController = EventsController(context)
     val driver: SqlDriver = AndroidSqliteDriver(AppDatabase.Schema, context, "app.db")
     database = AppDatabase(driver)
 
@@ -155,14 +156,46 @@ fun CreateEventScreen(navController: NavController) {
 
             Button(
                 onClick = {
-                    // Lógica para guardar el evento en la base de datos
-                    //PRUEBA
+                    // Log de pruebas
                     Log.d(TAG, "CreateEventScreenPruebas: $tituloEvento")
                     Log.d(TAG, "CreateEventScreenPruebas: $fecha")
                     Log.d(TAG, "CreateEventScreenPruebas: $direccion")
                     Log.d(TAG, "CreateEventScreenPruebas: $latitud")
                     Log.d(TAG, "CreateEventScreenPruebas: $longitud")
 
+                    // Reemplazar comas con puntos automáticamente
+                    val latitudFormatted = latitud.replace(",", ".")
+                    val longitudFormatted = longitud.replace(",", ".")
+
+                    // Intentar convertir a Double
+                    val latitudDouble = latitudFormatted.toDoubleOrNull()
+                    val longitudDouble = longitudFormatted.toDoubleOrNull()
+
+                    Log.d(TAG, "CreateEventScreenPruebas: $latitudDouble")
+                    Log.d(TAG, "CreateEventScreenPruebas: $longitudDouble")
+
+                    // Validar si las conversiones son válidas
+                    if (latitudDouble == null || longitudDouble == null) {
+                        Log.d(TAG, "Latitud o Longitud no son válidas.")
+                        Toast.makeText(
+                            context,
+                            "Por favor, ingrese valores numéricos válidos para latitud y longitud.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@Button
+                        /*El uso de return@Button en Kotlin sirve para salir únicamente del bloque
+                        lambda asociado al evento del botón*/
+                    }
+
+                    // Registrar evento en la base de datos
+                    eventoController.registrarEvento(
+                        tituloEvento,
+                        fecha,
+                        direccion,
+                        latitudDouble,
+                        longitudDouble,
+                        navController
+                    )
                 },
                 modifier = Modifier
                     .height(50.dp)

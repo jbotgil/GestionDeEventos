@@ -68,7 +68,7 @@ fun AdminEventScreen(navController: NavController) {
                     .weight(6f) // Ajusta el peso restante para la lista de eventos
                     .padding(bottom = 50.dp) // Espacio reservado para los botones
             ) {
-                AdminEventListScreen()
+                AdminEventListScreen(context)
             }
         }
 
