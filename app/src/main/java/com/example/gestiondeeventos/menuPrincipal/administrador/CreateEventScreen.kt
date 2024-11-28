@@ -1,11 +1,14 @@
 package com.example.gestiondeeventos.menuPrincipal.administrador
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -20,18 +23,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.database.AppDatabase
+import com.example.gestiondeeventos.controlador.EventsController
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
 import java.util.Calendar
 
 lateinit var database: AppDatabase
 
+
 @Composable
 fun CreateEventScreen(navController: NavController) {
     val context = LocalContext.current
+    val evenetoController = EventsController(context)
     val driver: SqlDriver = AndroidSqliteDriver(AppDatabase.Schema, context, "app.db")
     database = AppDatabase(driver)
 
@@ -103,7 +110,8 @@ fun CreateEventScreen(navController: NavController) {
                     label = "Latitud del lugar",
                     icon = Icons.Default.KeyboardArrowUp,
                     value = latitud,
-                    onValueChange = { latitud = it }
+                    onValueChange = { latitud = it },
+                    keyboardType = KeyboardType.Number
                 )
 
                 Text("Longitud", color = Color.White)
@@ -111,7 +119,8 @@ fun CreateEventScreen(navController: NavController) {
                     label = "Longitud del lugar",
                     icon = Icons.Default.KeyboardArrowUp,
                     value = longitud,
-                    onValueChange = { longitud = it }
+                    onValueChange = { longitud = it },
+                    keyboardType = KeyboardType.Number
                 )
             }
 
@@ -147,7 +156,13 @@ fun CreateEventScreen(navController: NavController) {
             Button(
                 onClick = {
                     // Lógica para guardar el evento en la base de datos
-                    // database.insertEvent(tituloEvento, fecha, direccion, latitud.toDoubleOrNull(), longitud.toDoubleOrNull())
+                    //PRUEBA
+                    Log.d(TAG, "CreateEventScreenPruebas: $tituloEvento")
+                    Log.d(TAG, "CreateEventScreenPruebas: $fecha")
+                    Log.d(TAG, "CreateEventScreenPruebas: $direccion")
+                    Log.d(TAG, "CreateEventScreenPruebas: $latitud")
+                    Log.d(TAG, "CreateEventScreenPruebas: $longitud")
+
                 },
                 modifier = Modifier
                     .height(50.dp)
@@ -168,7 +183,13 @@ fun CreateEventScreen(navController: NavController) {
 }
 
 @Composable
-fun InputField(label: String, icon: ImageVector, value: String, onValueChange: (String) -> Unit) {
+fun InputField(
+    label: String,
+    icon: ImageVector,
+    value: String,
+    onValueChange: (String) -> Unit,
+    keyboardType: KeyboardType = KeyboardType.Text
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -183,6 +204,7 @@ fun InputField(label: String, icon: ImageVector, value: String, onValueChange: (
                 onValueChange = onValueChange,
                 singleLine = true,
                 textStyle = TextStyle(color = Color.Black),
+                keyboardOptions = KeyboardOptions(keyboardType = keyboardType), // Se utiliza aquí
                 decorationBox = { innerTextField ->
                     if (value.isEmpty()) Text(label, color = Color.Gray)
                     innerTextField()
@@ -192,6 +214,7 @@ fun InputField(label: String, icon: ImageVector, value: String, onValueChange: (
         }
     }
 }
+
 
 @Composable
 fun SeleccionarFecha(

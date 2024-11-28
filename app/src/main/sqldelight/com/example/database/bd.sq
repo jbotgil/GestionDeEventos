@@ -46,8 +46,7 @@ SELECT * FROM Usuarios WHERE id_usuario = ?;
 RegistrarUsuario:
 INSERT INTO Usuarios (username,mail,passwd,esAdmin) VALUES (?,?,?,?);
 
-
---Configoptions
+--ConfigUseroptions
 UpdateMail:
 UPDATE Usuarios SET mail = ? WHERE id_usuario = ?;
 
@@ -58,6 +57,19 @@ UPDATE Usuarios SET passwd = ? WHERE id_usuario = ?;
 EliminarUsuario:
 DELETE FROM Usuarios WHERE id_usuario = ?;
 
+
+-- Consultas eventos
+
+GetEventosOrdenadosPorFecha:
+SELECT *
+FROM Eventos
+ORDER BY substr(fecha, 7, 4) || '-' || substr(fecha, 4, 2) || '-' || substr(fecha, 1, 2) ASC;
+
+GetEventoPorId:
+SELECT * FROM Eventos WHERE id_evento = ?;
+
+RegistrarEvento:
+INSERT INTO Eventos (titulo,fecha,direccion,latitud,longitud) VALUES (?,?,?,?,?);
 
 --CREAMOS UN USUARIO ADMINISTRADOR DEFAULT
 INSERT INTO Usuarios(mail,username,passwd,esAdmin) VALUES ("admin@gmail.com", "admin","admin",1);

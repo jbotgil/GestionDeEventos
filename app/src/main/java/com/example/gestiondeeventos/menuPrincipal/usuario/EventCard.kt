@@ -1,5 +1,6 @@
 package com.example.gestiondeeventos.menuPrincipal.usuario
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.database.Eventos
+import com.example.gestiondeeventos.controlador.ConfigController
+import com.example.gestiondeeventos.controlador.EventsController
+
 
 @Composable
 fun EventCard(title: String, date: String, location: String, onEdit: () -> Unit) {
@@ -53,18 +58,14 @@ fun EventCard(title: String, date: String, location: String, onEdit: () -> Unit)
     }
 }
 
-
-
-data class EventData(val title: String, val date: String, val location: String)
+//data class EventData(val title: String, val date: String, val location: String)
 
 @Composable
-fun EventListScreen() {
-    val events = mutableListOf<EventData>()
+fun EventListScreen(context: Context) {
+    val eventController = EventsController(context)
+    val events = mutableListOf<Eventos>()
 
-    for (i in 1..10) {
-        events.add(EventData("Evento $i", "20/11/2024", "Dirección $i"))
-    }
-
+    events.addAll(eventController.getEventos()!!)
 
     Box(
         modifier = Modifier
@@ -84,10 +85,10 @@ fun EventListScreen() {
                 items(events.size) { index ->
                     val event = events[index]
                     EventCard(
-                        title = event.title,
-                        date = event.date,
-                        location = event.location,
-                        onEdit = { /* Acción para editar */ }
+                        title = event.titulo,
+                        date = event.fecha,
+                        location = event.direccion,
+                        onEdit = {  /*Acción para editar*/  }
                     )
                 }
             }
