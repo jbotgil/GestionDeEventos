@@ -65,6 +65,7 @@ fun EventCard(title: String, date: String, location: String, onClick: () -> Unit
 fun EventListScreen(navController: NavController, context: Context) {
     val eventController = EventsController(context)
     val events = mutableListOf<Eventos>()
+    val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
 
     events.addAll(eventController.getEventos()!!)
 
@@ -90,7 +91,9 @@ fun EventListScreen(navController: NavController, context: Context) {
                         date = event.fecha,
                         location = event.direccion,
                         onClick = {
-                            /* todo: accion al pulsar la card */
+                            sharedPreferences.edit()
+                                .putLong("selectedEventId", event.id_evento)
+                                .apply()
                             navController.navigate("eventCardInfoScreen")
                         }
                     )

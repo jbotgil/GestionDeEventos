@@ -28,8 +28,6 @@ SELECT * FROM Usuarios WHERE mail = ?;
 GetUsuarios:
 SELECT * FROM Usuarios;
 
-GetEventos:
-SELECT * FROM Eventos;
 
 GetUsuarioExistente:
 SELECT * FROM Usuarios WHERE username = ? AND mail = ?;
@@ -60,10 +58,13 @@ DELETE FROM Usuarios WHERE id_usuario = ?;
 
 -- Consultas eventos
 
+GetEventos:
+SELECT * FROM Eventos;
+
 GetEventosOrdenadosPorFecha:
 SELECT *
 FROM Eventos
-ORDER BY substr(fecha, 7, 4) || '-' || substr(fecha, 4, 2) || '-' || substr(fecha, 1, 2) ASC;
+ORDER BY substr(fecha, 7, 4) ASC, substr(fecha, 4, 2) ASC, substr(fecha, 1, 2) ASC;
 
 GetEventoPorId:
 SELECT * FROM Eventos WHERE id_evento = ?;
