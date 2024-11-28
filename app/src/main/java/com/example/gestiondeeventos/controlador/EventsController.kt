@@ -26,7 +26,6 @@ class EventsController(private val context: Context) {
     ) {
         database = cargarDataBase()
         val bdQueries = database.bdQueries
-        var validaciones = false
         //Validacion de que hayan datos introducidos
         when {
             titulo.isBlank() -> {
@@ -91,5 +90,14 @@ class EventsController(private val context: Context) {
             listaEventos = bdQueries.GetEventosOrdenadosPorFecha().executeAsList()
         }
         return listaEventos
+    }
+
+    fun deleteEvento(idEvento: Long) {
+        database = cargarDataBase()
+        val bdQueries = database.bdQueries
+
+        database.transaction {
+            bdQueries.EliminarEvento(idEvento)
+        }
     }
 }

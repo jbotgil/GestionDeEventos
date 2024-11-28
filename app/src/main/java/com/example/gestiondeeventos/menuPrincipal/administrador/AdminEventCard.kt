@@ -1,6 +1,7 @@
 package com.example.gestiondeeventos.menuPrincipal.administrador
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -16,13 +17,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,7 +41,15 @@ import com.example.database.Eventos
 import com.example.gestiondeeventos.controlador.EventsController
 
 @Composable
-fun AdminEventCard(title: String, date: String, location: String, onEdit: () -> Unit) {
+fun AdminEventCard(
+    context: Context,
+    title: String,
+    date: String,
+    location: String,
+    onDeleteConfirmed: () -> Unit
+) {
+    var showDialog by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -41,15 +58,16 @@ fun AdminEventCard(title: String, date: String, location: String, onEdit: () -> 
                 shape = MaterialTheme.shapes.medium
             )
             .padding(16.dp)
+            /*.clickable { onSelect() } // Selecciona el evento al hacer clic*/
     ) {
         Box(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .fillMaxHeight() // Esto asegura que el Box ocupe todo el alto disponible
+                .fillMaxHeight()
                 .background(Color.LightGray)
                 .padding(25.dp),
-            contentAlignment = Alignment.Center // Centra el contenido tanto vertical como horizontalmente
+            contentAlignment = Alignment.Center
         ) {
             Text("IMG") // Reemplaza con tu imagen
         }
@@ -65,16 +83,48 @@ fun AdminEventCard(title: String, date: String, location: String, onEdit: () -> 
         }
 
         Button(
-            onClick = onEdit,
+            onClick = { showDialog = true },
             modifier = Modifier
-                .size(40.dp) // Tamaño fijo para que sea redondo
+                .size(40.dp)
                 .clip(CircleShape)
                 .align(Alignment.CenterVertically)
-                .border(1.dp, Color.Transparent, CircleShape), // Quitar el fondo
-            contentPadding = PaddingValues(0.dp), // Sin padding para ajustarse al círculo
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent) // Fondo transparente
+                .border(1.dp, Color.Transparent, CircleShape),
+            contentPadding = PaddingValues(0.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
         ) {
-            Icon(imageVector = Icons.Default.Create, contentDescription = null, tint = Color.White)
+            Icon(imageVector = Icons.Default.Delete, contentDescription = null, tint = Color.White)
+        }
+
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("Confirmar eliminación") },
+                text = { Text("¿Estás seguro de que deseas eliminar este evento?") },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showDialog = false
+                            onDeleteConfirmed() // Acción para eliminar
+                        }
+                    ) {
+                        Text("Aceptar")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            showDialog = false
+                            Toast.makeText(
+                                context,
+                                "Acción cancelada",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    ) {
+                        Text("Cancelar")
+                    }
+                }
+            )
         }
     }
 }
@@ -82,23 +132,26 @@ fun AdminEventCard(title: String, date: String, location: String, onEdit: () -> 
 
 
 
+
 @Composable
 fun AdminEventListScreen(context: Context) {
     val eventController = EventsController(context)
-    val events = mutableListOf<Eventos>()
+    val events = remember { mutableStateListOf<Eventos>() }
 
-    events.addAll(eventController.getEventos()!!)
+    // Cargar eventos al iniciar
+    LaunchedEffect(Unit) {
+        events.addAll(eventController.getEventos() ?: emptyList())
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Lista de eventos
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 80.dp) // Espacio reservado para los botones
+                .padding(bottom = 80.dp)
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -107,10 +160,16 @@ fun AdminEventListScreen(context: Context) {
                 items(events.size) { index ->
                     val event = events[index]
                     AdminEventCard(
+                        context = context,
                         title = event.titulo,
                         date = event.fecha,
                         location = event.direccion,
-                        onEdit = { /* Acción para editar */ }
+                        onDeleteConfirmed = {
+                            // Eliminar el evento seleccionado
+                            eventController.deleteEvento(event.id_evento)
+                            events.remove(event)
+                            Toast.makeText(context, "Evento eliminado", Toast.LENGTH_SHORT).show()
+                        }
                     )
                 }
             }

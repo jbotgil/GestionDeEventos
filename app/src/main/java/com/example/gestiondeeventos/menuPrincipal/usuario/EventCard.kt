@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.database.Eventos
-import com.example.gestiondeeventos.controlador.ConfigController
 import com.example.gestiondeeventos.controlador.EventsController
 
 

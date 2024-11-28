@@ -72,5 +72,8 @@ RegistrarEvento:
 INSERT INTO Eventos (titulo, fecha, direccion, latitud, longitud)
 VALUES (?, ?, ?, ?, ?);
 
+EliminarEvento:
+DELETE FROM Eventos WHERE id_evento = ?;
+
 --CREAMOS UN USUARIO ADMINISTRADOR DEFAULT
 INSERT INTO Usuarios(mail,username,passwd,esAdmin) VALUES ("admin@gmail.com", "admin","admin",1);
