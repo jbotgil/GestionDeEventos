@@ -40,7 +40,7 @@ fun EventCard(title: String, date: String, location: String, onClick: () -> Unit
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .fillMaxHeight() // Esto asegura que el Box ocupe todo el alto disponible
+                .fillMaxHeight()
                 .background(Color.LightGray)
                 .padding(25.dp),
             contentAlignment = Alignment.Center // Centra el contenido tanto vertical como horizontalmente
@@ -67,7 +67,7 @@ fun EventListScreen(navController: NavController, context: Context) {
     val events = mutableListOf<Eventos>()
     val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
 
-    events.addAll(eventController.getEventos()!!)
+    events.addAll(eventController.getEventos())
 
     Box(
         modifier = Modifier

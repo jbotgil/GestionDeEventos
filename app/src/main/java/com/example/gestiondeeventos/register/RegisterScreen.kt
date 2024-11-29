@@ -56,7 +56,7 @@ fun RegisterScreen(navController: NavHostController) {
     val botonHabilitado by derivedStateOf { email.isNotBlank() && username.isNotBlank() && password1.isNotBlank() && password2.isNotBlank() }
     val context = LocalContext.current
     val registerController = RegisterController(context)
-    var usuario: Usuarios? = null;
+    var usuario: Usuarios?
 
     Box(
         modifier = Modifier
@@ -108,7 +108,6 @@ fun RegisterScreen(navController: NavHostController) {
                 // Botón de registro con estilo deshabilitado
                 Button(
                     onClick = {
-                        //TODO: LOGICA DEL REGISTRO
                         usuario = registerController.registrarUsuario(username, email, password1, password2, 0)
                         if (usuario != null){
                             Toast.makeText(context, "Usuario registrado exitosamente", Toast.LENGTH_SHORT).show()
