@@ -73,9 +73,8 @@ dependencies {
     implementation(libs.sqldelightAndroidDriver)
     implementation(libs.sqldelightSqliteDriver)
     implementation(libs.sqldelightCoroutinesExtensions)
-
-    //Coil (para las imagenes de los eventos)
-    implementation("io.coil-kt:coil-compose:2.4.0")
+    // Google Maps
+    implementation(libs.maps.compose)
 }
 // SQLDelight
 sqldelight {

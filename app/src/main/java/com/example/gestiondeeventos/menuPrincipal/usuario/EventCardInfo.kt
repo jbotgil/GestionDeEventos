@@ -1,6 +1,8 @@
 package com.example.gestiondeeventos.menuPrincipal.usuario
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -17,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -30,6 +33,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.database.Eventos
 import com.example.gestiondeeventos.controlador.EventsController
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 
 @Composable
 fun EventCardInfo(navController: NavController, context: Context) {
@@ -43,6 +52,8 @@ fun EventCardInfo(navController: NavController, context: Context) {
     val tituloEvento by remember { mutableStateOf(evento?.titulo ?: "Sin título") }
     val direccionEvento by remember { mutableStateOf(evento?.direccion ?: "Sin dirección") }
     val fechaEvento by remember { mutableStateOf(evento?.fecha ?: "Sin fecha") }
+    val latitudEvento by remember { mutableDoubleStateOf(evento?.latitud ?: 0.0) }
+    val longitudEvento by remember { mutableDoubleStateOf(evento?.longitud ?: 0.0) }
 
     // Obtenemos el tamaño de la pantalla
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
@@ -82,7 +93,7 @@ fun EventCardInfo(navController: NavController, context: Context) {
                 modifier = Modifier.padding(vertical = 4.dp)
             )
 
-            Spacer(modifier = Modifier.height(16.dp)) // Espaciador fijo
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Mapa que ocupa el 50% de la pantalla
             Box(
@@ -92,11 +103,12 @@ fun EventCardInfo(navController: NavController, context: Context) {
                     .clip(RoundedCornerShape(8.dp))
                     .background(Color.Gray) // Color placeholder para el mapa
             ) {
-                Text(
+                /*Text(
                     text = "Mapa aquí",
                     color = Color.White,
                     modifier = Modifier.align(Alignment.Center)
-                )
+                )*/
+                MapaCompose(latitudEvento,longitudEvento)
             }
 
             Spacer(modifier = Modifier.height(screenHeight * 0.2f)) // Espaciador fijo debajo del mapa
@@ -120,5 +132,26 @@ fun EventCardInfo(navController: NavController, context: Context) {
                 Text("Volver", style = TextStyle(color = Color.White))
             }
         }
+    }
+}
+
+@Composable
+fun MapaCompose(latitud: Double, longitud: Double) {
+    GoogleMap(
+        modifier = Modifier.fillMaxSize(),
+        cameraPositionState = CameraPositionState(
+            CameraPosition.fromLatLngZoom(
+                LatLng(latitud,longitud),
+                17f // Nivel de zoom inicial
+            )
+        ),
+        //properties = MapProperties(mapType = MapType.SATELLITE)
+    ) {
+        // Marcador en una ubicación específica
+        Marker(
+            state = MarkerState(position = LatLng(latitud, longitud)),
+            title = "Encuentro",
+            snippet = "Marcador en la torre el punto de encuentro"
+        )
     }
 }

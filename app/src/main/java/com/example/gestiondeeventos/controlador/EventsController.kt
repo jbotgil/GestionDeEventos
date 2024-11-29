@@ -81,16 +81,6 @@ class EventsController(private val context: Context) {
         return evento
     }
 
-   /* fun getEventos(): Collection<Eventos>? {
-        database = cargarDataBase()
-        val bdQueries = database.bdQueries
-        var listaEventos: Collection<Eventos>? = null
-
-        database.transaction {
-            listaEventos = bdQueries.GetEventosOrdenadosPorFecha().executeAsList()
-        }
-        return listaEventos
-    }*/
    fun getEventos(): List<Eventos> {
        database = cargarDataBase()
        val bdQueries = database.bdQueries

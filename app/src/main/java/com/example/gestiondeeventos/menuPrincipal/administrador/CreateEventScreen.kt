@@ -189,8 +189,8 @@ fun CreateEventScreen(navController: NavController) {
                     val latitudDouble = latitudFormatted.toDoubleOrNull()
                     val longitudDouble = longitudFormatted.toDoubleOrNull()
 
-                    Log.d(TAG, "CreateEventScreenPruebas: $latitudDouble")
-                    Log.d(TAG, "CreateEventScreenPruebas: $longitudDouble")
+                    Log.d(TAG, "CreateEventScreenPruebas -> laitutd: $latitudDouble")
+                    Log.d(TAG, "CreateEventScreenPruebas -> longitud: $longitudDouble")
 
                     // Validar si las conversiones son válidas
                     if (latitudDouble == null || longitudDouble == null) {
