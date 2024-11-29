@@ -12,6 +12,7 @@ navigationCompose = "2.8.4"
 navigationRuntimeKtx = "2.8.4"
 navigationComposeVersion = "2.8.4"
 mapsCompose = "4.4.1"
+playServicesLocation = "21.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -34,6 +35,7 @@ sqldelightAndroidDriver = "com.squareup.sqldelight:android-driver:1.5.5"
 sqldelightSqliteDriver = "com.squareup.sqldelight:sqlite-driver:1.5.5"
 sqldelightCoroutinesExtensions = "com.squareup.sqldelight:coroutines-extensions-jvm:1.5.5"
 maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

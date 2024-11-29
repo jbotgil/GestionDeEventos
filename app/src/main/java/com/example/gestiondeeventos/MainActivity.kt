@@ -25,7 +25,12 @@ import com.example.gestiondeeventos.menuPrincipal.usuario.UserEventScreen
 import com.example.gestiondeeventos.register.RegisterScreen
 import com.example.gestiondeeventos.ui.theme.GestionDeEventosTheme
 
-data class UserPreference(val name: String, val passwd: String, val recordarDatos: Boolean, val idUsuario: Long) //En esta clase guardaremos las preferencias del usuario
+data class UserPreference(
+    val name: String,
+    val passwd: String,
+    val recordarDatos: Boolean,
+    val idUsuario: Long
+) //En esta clase guardaremos las preferencias del usuario
 
 class MainActivity : ComponentActivity() {
 

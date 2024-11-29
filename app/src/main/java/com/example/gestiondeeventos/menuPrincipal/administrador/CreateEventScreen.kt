@@ -1,9 +1,6 @@
 package com.example.gestiondeeventos.menuPrincipal.administrador
 
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.database.AppDatabase
 import com.example.gestiondeeventos.controlador.EventsController
+import com.example.gestiondeeventos.controlador.LocationController
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
 import java.util.Calendar
@@ -60,6 +58,7 @@ lateinit var database: AppDatabase
 fun CreateEventScreen(navController: NavController) {
     val context = LocalContext.current
     val eventoController = EventsController(context)
+    val locationController = LocationController(context)
     val driver: SqlDriver = AndroidSqliteDriver(AppDatabase.Schema, context, "app.db")
     database = AppDatabase(driver)
 
@@ -145,10 +144,28 @@ fun CreateEventScreen(navController: NavController) {
                     keyboardType = KeyboardType.Number
                 )
             }
+
             UbicacionActualSwitch(
                 usarUbicacionActual = usarUbicacionActual,
-                onCheckedChange = { usarUbicacionActual = it }
+                onCheckedChange = { isChecked ->
+                    usarUbicacionActual = isChecked
+                    if (isChecked) {
+                        /*locationController.obtenerUbicacionActual { latitude, longitude ->
+                            latitud = latitude
+                            longitud = longitude
+                        }*/
+                        locationController.obtenerUbicacionActual {latitudParametro, longitudParametro ->
+                            latitud = latitudParametro
+                            longitud = longitudParametro
+                        }
+                    } else {
+                        // Limpiar los valores de latitud y longitud cuando se desactiva el switch
+                        latitud = ""
+                        longitud = ""
+                    }
+                }
             )
+
             Spacer(modifier = Modifier.height(24.dp))
         }
 
@@ -180,44 +197,12 @@ fun CreateEventScreen(navController: NavController) {
 
             Button(
                 onClick = {
-                    // Log de pruebas
-                    Log.d(TAG, "CreateEventScreenPruebas: $tituloEvento")
-                    Log.d(TAG, "CreateEventScreenPruebas: $fecha")
-                    Log.d(TAG, "CreateEventScreenPruebas: $direccion")
-                    Log.d(TAG, "CreateEventScreenPruebas: $latitud")
-                    Log.d(TAG, "CreateEventScreenPruebas: $longitud")
-
-                    // Reemplazar comas con puntos automáticamente
-                    val latitudFormatted = latitud.replace(",", ".")
-                    val longitudFormatted = longitud.replace(",", ".")
-
-                    // Intentar convertir a Double
-                    val latitudDouble = latitudFormatted.toDoubleOrNull()
-                    val longitudDouble = longitudFormatted.toDoubleOrNull()
-
-                    Log.d(TAG, "CreateEventScreenPruebas -> laitutd: $latitudDouble")
-                    Log.d(TAG, "CreateEventScreenPruebas -> longitud: $longitudDouble")
-
-                    // Validar si las conversiones son válidas
-                    if (latitudDouble == null || longitudDouble == null) {
-                        Log.d(TAG, "Latitud o Longitud no son válidas.")
-                        Toast.makeText(
-                            context,
-                            "Por favor, ingrese valores numéricos válidos para latitud y longitud.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        return@Button
-                        /*El uso de return@Button en Kotlin sirve para salir únicamente del bloque
-                        lambda asociado al evento del botón*/
-                    }
-
-                    // Registrar evento en la base de datos
                     eventoController.registrarEvento(
                         tituloEvento,
                         fecha,
                         direccion,
-                        latitudDouble,
-                        longitudDouble,
+                        latitud.toDoubleOrNull() ?: 0.0,
+                        longitud.toDoubleOrNull() ?: 0.0,
                         navController
                     )
                 },
@@ -238,6 +223,9 @@ fun CreateEventScreen(navController: NavController) {
         }
     }
 }
+
+
+
 
 @Composable
 fun InputField(
@@ -333,12 +321,12 @@ fun UbicacionActualSwitch(
         Text(
             text = "¿Desea registrar la ubicación actual?",
             color = Color.White,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyLarge
         )
         Switch(
             checked = usarUbicacionActual,
             onCheckedChange = onCheckedChange,
-            modifier = Modifier.padding(start = 70.dp),
+            modifier = Modifier.padding(start = 50.dp),
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Color.White,
                 uncheckedThumbColor = Color.Gray,

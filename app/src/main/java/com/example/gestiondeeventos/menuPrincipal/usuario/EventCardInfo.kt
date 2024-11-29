@@ -1,8 +1,6 @@
 package com.example.gestiondeeventos.menuPrincipal.usuario
 
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

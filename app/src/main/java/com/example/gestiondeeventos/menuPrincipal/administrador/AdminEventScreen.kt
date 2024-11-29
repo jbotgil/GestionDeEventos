@@ -1,5 +1,11 @@
 package com.example.gestiondeeventos.menuPrincipal.administrador
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,11 +34,49 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 
 @Composable
 fun AdminEventScreen(navController: NavController) {
     val context = LocalContext.current
+
+    // Lanzador para solicitar permisos
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            Log.d("Permisos", "Permiso de ubicación concedido")
+            navController.navigate("createEventScreen")
+        } else {
+            Log.d("Permisos", "Permiso de ubicación denegado")
+            Toast.makeText(
+                context,
+                "El permiso de ubicación es necesario para crear un evento.",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    // Función para manejar la solicitud de permisos
+    val solicitarPermisoUbicacion = remember {
+        {
+            when {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    // Permiso ya concedido
+                    Log.d("Permisos", "Permiso de ubicación ya concedido")
+                    navController.navigate("createEventScreen")
+                }
+                else -> {
+                    // Solicitar el permiso
+                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                }
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -77,7 +122,7 @@ fun AdminEventScreen(navController: NavController) {
                 .padding(16.dp)
                 .padding(bottom = 20.dp)
                 .padding(horizontal = 10.dp)
-                .fillMaxWidth() ,
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween, // Distribuir los botones a los extremos
         ) {
             Button(
@@ -101,7 +146,7 @@ fun AdminEventScreen(navController: NavController) {
             }
             Button(
                 onClick = {
-                   navController.navigate("createEventScreen")
+                    solicitarPermisoUbicacion()
                 },
                 modifier = Modifier
                     .size(80.dp) // Tamaño fijo para que sea redondo
