@@ -28,6 +28,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -66,6 +68,7 @@ fun CreateEventScreen(navController: NavController) {
     var direccion by remember { mutableStateOf("") }
     var latitud by remember { mutableStateOf("") }
     var longitud by remember { mutableStateOf("") }
+    var usarUbicacionActual by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -142,7 +145,10 @@ fun CreateEventScreen(navController: NavController) {
                     keyboardType = KeyboardType.Number
                 )
             }
-
+            UbicacionActualSwitch(
+                usarUbicacionActual = usarUbicacionActual,
+                onCheckedChange = { usarUbicacionActual = it }
+            )
             Spacer(modifier = Modifier.height(24.dp))
         }
 
@@ -309,5 +315,36 @@ fun SeleccionarFecha(
                 style = TextStyle(color = if (selectedDate.isEmpty()) Color.Gray else Color.Black)
             )
         }
+    }
+}
+
+@Composable
+fun UbicacionActualSwitch(
+    usarUbicacionActual: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Text(
+            text = "¿Desea registrar la ubicación actual?",
+            color = Color.White,
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Switch(
+            checked = usarUbicacionActual,
+            onCheckedChange = onCheckedChange,
+            modifier = Modifier.padding(start = 70.dp),
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color.White,
+                uncheckedThumbColor = Color.Gray,
+                checkedTrackColor = Color(android.graphics.Color.parseColor("#A12D4A")),
+                uncheckedTrackColor = Color.LightGray
+            )
+        )
     }
 }
