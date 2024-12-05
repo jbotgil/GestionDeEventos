@@ -10,9 +10,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,7 +58,6 @@ fun EventCardInfo(navController: NavController, context: Context) {
     val latitudEvento by remember { mutableDoubleStateOf(evento?.latitud ?: 0.0) }
     val longitudEvento by remember { mutableDoubleStateOf(evento?.longitud ?: 0.0) }
 
-    // Obtenemos el tamaño de la pantalla
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     Box(
@@ -65,13 +69,40 @@ fun EventCardInfo(navController: NavController, context: Context) {
                 )
             )
     ) {
+        // Ícono de compartir en la esquina superior derecha
+        IconButton(
+            onClick = {
+                val shareText = """
+                    Evento: $tituloEvento
+                    Fecha: $fechaEvento
+                    Dirección: $direccionEvento
+                    Ubicación: https://maps.google.com/?q=$latitudEvento,$longitudEvento
+                """.trimIndent()
+
+                val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(android.content.Intent.EXTRA_TEXT, shareText)
+                }
+                context.startActivity(android.content.Intent.createChooser(intent, "Compartir evento"))
+            },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Share,
+                contentDescription = "Compartir",
+                tint = Color.White,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Título en la parte superior
             Text(
                 text = tituloEvento,
                 color = Color.White,
@@ -93,25 +124,18 @@ fun EventCardInfo(navController: NavController, context: Context) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Mapa que ocupa el 50% de la pantalla
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(screenHeight * 0.5f) // 50% de la altura de la pantalla
+                    .height(screenHeight * 0.5f)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color.Gray) // Color placeholder para el mapa
+                    .background(Color.Gray)
             ) {
-                /*Text(
-                    text = "Mapa aquí",
-                    color = Color.White,
-                    modifier = Modifier.align(Alignment.Center)
-                )*/
-                MapaCompose(latitudEvento,longitudEvento)
+                MapaCompose(latitudEvento, longitudEvento)
             }
 
-            Spacer(modifier = Modifier.height(screenHeight * 0.2f)) // Espaciador fijo debajo del mapa
+            Spacer(modifier = Modifier.height(screenHeight * 0.2f))
 
-            // Botón "Volver"
             Button(
                 onClick = {
                     Toast.makeText(context, "Saliendo...", Toast.LENGTH_SHORT).apply {
