@@ -18,10 +18,10 @@
         android:theme="@style/Theme.GestionDeEventos"
         tools:targetApi="31">
 
-        <!-- API DE GOOGLE MAPS TODO: QUITAR ANTES DE SUBIR A GITHUB -->
+        <!-- API DE GOOGLE MAPS -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyA_GhCaGwFFJtki59Qi0jQ1vBxfQg76iCY" />
+            android:value="<!--Tu api de google maps aqui-->" />
 
         <activity
             android:name=".MainActivity"
