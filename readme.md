@@ -45,8 +45,7 @@
 1. **Registro e inicio de sesión:**  
    Los usuarios deben registrarse para acceder a la funcionalidad completa de la aplicación.  
    
-   <!--imagen_registro-->
-   <![alt](readmeImages/registro.png)>
+   <img src="readmeImages/registro.png" alt="Registro" width="30%" />
 
 
    Para una experiencia completa, puedes usar un usuario **administrador** predefinido:  
@@ -55,7 +54,7 @@
    Usuario: admin  
    Contraseña: admin
    ```
-   ![alt](readmeImages/adminLogin.png)
+   <img src="readmeImages/adminLogin.png" alt="AdminLogin" width="30%" />
 
 
 2. **Gestión de eventos:**  
