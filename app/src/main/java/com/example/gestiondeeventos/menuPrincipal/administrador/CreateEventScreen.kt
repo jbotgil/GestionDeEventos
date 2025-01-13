@@ -150,10 +150,6 @@ fun CreateEventScreen(navController: NavController) {
                 onCheckedChange = { isChecked ->
                     usarUbicacionActual = isChecked
                     if (isChecked) {
-                        /*locationController.obtenerUbicacionActual { latitude, longitude ->
-                            latitud = latitude
-                            longitud = longitude
-                        }*/
                         locationController.obtenerUbicacionActual {latitudParametro, longitudParametro ->
                             latitud = latitudParametro
                             longitud = longitudParametro
