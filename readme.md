@@ -7,9 +7,10 @@
 - Creación de eventos con detalles como fecha, ubicación y descripción.
 - Interfaz de usuario intuitiva y fácil de usar.
 - Registro e inicio de sesión.
-- Filtro de eventos por proximidad de fecha.
+- Filtro de eventos por fecha.
 - Pop-ups informativos para entender las funcionalidades de la app.
 - Uso del sensor de ubicación para determinar la posición actual del usuario.
+- Posibilidad de compartir eventos.
 
 ## Tecnologías Utilizadas
 
@@ -43,6 +44,10 @@
 
 1. **Registro e inicio de sesión:**  
    Los usuarios deben registrarse para acceder a la funcionalidad completa de la aplicación.  
+   
+   <!--imagen_registro-->
+   <![alt](readmeImages/registro.png)>
+
 
    Para una experiencia completa, puedes usar un usuario **administrador** predefinido:  
 
@@ -50,18 +55,35 @@
    Usuario: admin  
    Contraseña: admin
    ```
+   ![alt](readmeImages/adminLogin.png)
+
 
 2. **Gestión de eventos:**  
 
    - **Usuarios administradores:**  
+     - Solicita permiso de ubicación.
      - Crear nuevos eventos con toda la información requerida.  
      - Visualizar una lista de eventos existentes.  
      - Eliminar eventos según sea necesario.  
+     
+   <div style="display: flex; justify-content: space-around;">
+      <img src="readmeImages/permisoUbicacion.png" alt="PermisoUbicacion" width="30%" />
+      <img src="readmeImages/creacionDeEvento.png" alt="CreacionDeEvento" width="30%" />
+      <img src="readmeImages/visualizacionEventos.png" alt="VisualizacionEventos" width="30%" />
+      <img src="readmeImages/eliminarEvento.png" alt="EliminarEvento" width="30%" />
+   </div>
 
    - **Usuarios normales:**  
      - Visualizar una lista de eventos existentes.  
      - Ver los detalles de cada evento.  
      - Acceder a una configuración de cuenta para cambiar el usuario o la contraseña.  
+     - Compartir eventos.
+   <div style="display: flex; justify-content: space-around;">
+      <img src="readmeImages/eventosUsuario.png" alt="EventosUsuario" width="30%" />
+      <img src="readmeImages/detallesEventos.png" alt="DetallesEventos" width="30%" />
+      <img src="readmeImages/ajustesUsuario.png" alt="AjustesUsuario" width="30%" />
+      <img src="readmeImages/compartirEvento.png" alt="CompartirEvento" width="30%" />
+   </div>
 
 ## Contribución
 
